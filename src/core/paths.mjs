@@ -56,6 +56,16 @@ export function aidfPaths(root) {
     adapters: path.join(base, 'adapters'),
     context: path.join(base, 'state', 'context'),
     reports: path.join(base, 'reports'),
+    // L1 artefacts
+    artefacts: path.join(base, 'artefacts'),
+    artefactsRequirements: path.join(base, 'artefacts', 'requirements.json'),
+    artefactsDiscovery: path.join(base, 'artefacts', 'discovery.json'),
+    artefactsConstraints: path.join(base, 'artefacts', 'constraints.json'),
+    artefactsArchitecture: path.join(base, 'artefacts', 'architecture.json'),
+    artefactsTestPlan: path.join(base, 'artefacts', 'test-plan.json'),
+    artefactsDecisions: path.join(base, 'artefacts', 'decisions'),
+    artefactsSecurity: path.join(base, 'artefacts', 'security'),
+    artefactsSecurityThreatModel: path.join(base, 'artefacts', 'security', 'threat-model.json'),
   };
 }
 
