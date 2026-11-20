@@ -1,0 +1,52 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: node-${{ matrix.node }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ['20.x', '22.x']
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: Syntax check
+        shell: bash
+        run: |
+          set -euo pipefail
+          find src bin demo -name '*.mjs' -print0 | xargs -0 -n1 node --check
+
+      - name: Test suite (includes packaging test)
+        shell: bash
+        run: node --test "tests/*.test.mjs"
+
+      - name: Smoke CLI
+        shell: bash
+        run: |
+          set -euo pipefail
+          node bin/aidf.mjs --version
+          node demo/run-demo.mjs
+
+      - name: Failure diagnostics
+        if: failure()
+        shell: bash
+        run: |
+          echo "Node: $(node --version)"
+          echo "npm: $(npm --version)"
+          echo "tar: $(tar --version | head -n 1)"
+          find . -maxdepth 3 -name '*.tgz' -o -name '*.log' | head -n 50
