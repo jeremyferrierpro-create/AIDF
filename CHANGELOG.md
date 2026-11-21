@@ -3,6 +3,17 @@
 All notable changes to AIDF are documented here. This project does not use
 conventional commits; each entry names real, verified behaviour changes.
 
+## [0.3.2] — 2026-11-21
+
+### Changed (docs)
+- `README.md`, `INSTALLATION.md`, `UTILISATION.md` aligned with the real
+  0.3.x state: npm package `framework-aidf`, three adapters with honest
+  runtime statuses (OpenCode PROVEN, Qoder skills PROVEN-partiel,
+  generic PROVEN), all 27 commands documented including the L1–L3
+  engines, `aidf ops` pipeline + `ops watch`, real Figma REST client,
+  resource engine v2 commands, updated file counts and test totals
+  (217/217).
+
 ## [0.3.1] — 2026-11-21
 
 ### Added (verified 2026-11-21)

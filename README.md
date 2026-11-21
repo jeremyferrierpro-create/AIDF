@@ -1,6 +1,6 @@
 # AIDF — AI Development Framework
 
-**Version 0.3.1** · MIT · Node.js ≥ 20.11 · zéro dépendance runtime
+**Version 0.3.2** · MIT · Node.js ≥ 20.11 · zéro dépendance runtime
 
 > AIDF est une **couche de gouvernance installable** dans un projet : elle
 > encadre le développement assisté par IA (agents, Qoder, Spec Kit) avec des
@@ -33,10 +33,14 @@ déléguée à l'agent hôte), Design Engine (classifieur + mockups SVG/CSS de
 secours), inventaire complet des ressources externes (sha256, licences,
 secrets exclus), catalogue et activation explicite des skills tierces,
 modèle de menace STRIDE, plan de test par critère d'acceptation, génération
-de documentation Markdown avec détection de divergence, et rapport de
+de documentation Markdown avec détection de divergence, pipeline de
+delivery (`aidf ops` : build/test/deploy/rollback + monitoring `watch`
+borné, exécution conditionnée et evidence), client Figma REST réel
+(`validateFigma` prouvé sur un fichier réel), et rapport de
 release consolidé ; gérer 8 phases / 16 gates ; chaîner l'evidence
-(SHA-256) ; 13 skills built-in + adaptateurs **Qoder**, **OpenCode**
-(runtime prouvé) et **generic** (AGENTS.md + `.aidf/skills/`) ; intégrer
+(SHA-256) ; 13 skills built-in + adaptateurs **Qoder** (skills runtime
+prouvés par un humain), **OpenCode** (runtime prouvé) et **generic**
+(AGENTS.md + `.aidf/skills/`) ; intégrer
 GitHub Spec Kit **sans duplication** ; enregistrer des ressources externes
 avec gating de licences.
 
@@ -111,7 +115,7 @@ AGENTS.md                    bloc managé (votre contenu préservé)
 .aidf/docs/                11 documents avec statuts + docs/generated/
 .aidf/artefacts/           exigences, décisions, test-plan, threat-model
 .aidf/registry/            skills, activation-map, dependencies, resources.lock.json
-.aidf/workflows/           phases.yaml + gates.yaml (modifiables projet)
+.aidf/workflows/           phases.yaml + gates.yaml + pipeline.yaml (modifiables projet)
 .aidf/evidence/            preuves chaînées + index
 .aidf/state/, reports/, backups/, logs/
 ```
@@ -125,11 +129,11 @@ AGENTS.md                    bloc managé (votre contenu préservé)
 `VALIDATION.md` (les mesures), `LIMITATIONS.md`, `COMPATIBILITY.md`,
 `INVENTORY.md`, `FRAMEWORK.md`.
 
-**Journal** : `CHANGELOG.md` (v0.3.0 : + pipeline de delivery `aidf ops` avec rollback ; v0.2.0 : moteurs artefacts/requirements/traceability/décision/design, inventaire ressources, skills tierces, adaptateur OpenCode, threat model, test plan, docs generate, release report, migration 0.1.0→0.2.0 prouvée).
+**Journal** : `CHANGELOG.md` (v0.3.1 : `ops watch` monitoring borné + client Figma REST réel prouvé `fully_verified` ; v0.3.0 : pipeline de delivery `aidf ops` ; v0.2.0 : moteurs artefacts/requirements/traceability/décision/design, inventaire ressources, skills tierces, adaptateur OpenCode, threat model, test plan, docs generate, release report, migration 0.1.0→0.2.0 prouvée). Package publié : **`framework-aidf`** sur npm.
 
 ## Preuves de qualité (mesurées, pas déclarées)
 
-- **212/212 tests** `node --test` (incluant un E2E du CLI : install → doctor →
+- **217/217 tests** `node --test` (incluant un E2E du CLI : install → doctor →
   scan → skills → context → gate → config → speckit → uninstall).
 - **E2E en situation réelle** : projet TaskFlow gouverné de bout en bout,
   2 bugs réels détectés/corrigés par les gates, conflit d'édition humain
