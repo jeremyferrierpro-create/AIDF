@@ -3,6 +3,22 @@
 All notable changes to AIDF are documented here. This project does not use
 conventional commits; each entry names real, verified behaviour changes.
 
+## [Unreleased]
+
+### Added (verified 2026-11-21)
+- `aidf ops` — project delivery pipeline engine (`src/core/ops.mjs`,
+  `src/commands/ops.mjs`). `.aidf/workflows/pipeline.yaml` (project-owned,
+  scaffolded by `aidf ops init`) declares ordered steps
+  (`build`/`test`/`deploy`/`verify`/`custom`) and rollback commands.
+  `aidf ops run` executes steps sequentially via the same safe
+  `runCommand` used by gates (no shell operators), stops on the first
+  non-PASS step, writes `.aidf/reports/OPS-*.{json,md}` and records the
+  last successful deploy for `aidf ops rollback`. Execution requires
+  `--allow-exec` or `security.allowCommandExecution=true`; without it every
+  step reports NOT_PROVEN and nothing runs. Verified by
+  `tests/ops.test.mjs` (init/plan dry-run, denied vs permitted execution,
+  fail-fast, shell-operator rejection, rollback).
+
 ## [0.2.0] — 2026-11-21
 
 AIDF 0.2.0 turns the 0.1.0 governance base into a full engineering framework:

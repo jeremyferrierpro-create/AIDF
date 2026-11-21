@@ -18,7 +18,7 @@ runtime non prouvé), PARTIAL, NOT_PROVEN, BLOCKED, ABSENT.
 
 | Domaine | État | Preuve |
 |---|---|---|
-| 26 verbes CLI | PROVEN | `src/cli.mjs` COMMANDS; e2e `tests/cli.test.mjs` + `tests/cli.engines.test.mjs` + `tests/cli.security.test.mjs` + `tests/cli.delivery.test.mjs` |
+| 26 verbes CLI (+ `ops` → 27 en Unreleased) | PROVEN | `src/cli.mjs` COMMANDS; e2e `tests/cli.test.mjs` + `tests/cli.engines.test.mjs` + `tests/cli.security.test.mjs` + `tests/cli.delivery.test.mjs` + `tests/ops.test.mjs` |
 | Phases/gates/checks | PROVEN | `assets/workflows/`, `src/core/workflow.mjs`, gates tests |
 | Evidence Engine + `verifyEvidenceChain` | PROVEN | `src/core/evidence.mjs`, `evidence verify` |
 | Packaging npm | PROVEN | `tests/packaging.test.mjs` (pack → install → init → doctor) |
@@ -119,7 +119,8 @@ Régressions WIP corrigées le 2026-11-21:
 | Skill `aidf-devops-engineering` | AVAILABLE |
 | Phase `release` + gates | PROVEN (workflow) |
 | Rapport de release (`aidf release report`) | PROVEN | évalue tous les gates en lecture seule (pas d'enregistrement), agrège statuts docs/CHANGELOG/evidence/artefacts, écrit `.aidf/reports/RELEASE-<date>.{json,md}`, verdict READY/NOT_READY, `--strict` pour CI, `--record` pour evidence `release-report` |
-| Moteur build/deploy/rollback/monitoring | ABSENT (conseillé par skills/gates, pas d'outil) |
+| Pipeline build/test/deploy/rollback (`aidf ops`, Unreleased) | PROVEN | `src/core/ops.mjs` + `src/commands/ops.mjs` : `.aidf/workflows/pipeline.yaml` projet, exécution séquentielle via `runCommand` (sans shell), fail-fast, `--allow-exec`/`security.allowCommandExecution` exigé, rapports `OPS-*` + evidence `ops-run`/`ops-rollback`, rollback du dernier deploy réussi. Testé e2e (`tests/ops.test.mjs`) |
+| Monitoring continu | ABSENT | pas de boucle de surveillance; `ops status` montre seulement la dernière exécution |
 
 ## 10. Gouvernance obligatoire
 

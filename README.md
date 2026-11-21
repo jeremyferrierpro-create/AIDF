@@ -25,7 +25,7 @@ humaines sont nominatives (`--by "prénom"`).
 
 ## Ce qu'AIDF fait / ne fait pas
 
-**Fait** : installer ~190 fichiers gouvernés dans un projet ; 26 commandes CLI
+**Fait** : installer ~190 fichiers gouvernés dans un projet ; 27 commandes CLI
 (`--json`, exit 0/1/2) dont les moteurs L1–L3 — artefacts canoniques
 (JSON + validation), registre d'exigences, traçabilité exigence→design→
 implémentation→test→preuve, Decision Engine déterministe (interprétation
@@ -60,7 +60,7 @@ node .aidf\bin\aidf.mjs release report  # → bilan de release READY/NOT_READY
 Le **premier workflow complet documenté pas-à-pas** (projet TaskFlow, du
 « dicté humain » à la release) est dans `UTILISATION.md` §Exemple réel.
 
-## Les commandes (26 verbes)
+## Les commandes (27 verbes)
 
 | Commande | Rôle |
 |---|---|
@@ -86,6 +86,7 @@ Le **premier workflow complet documenté pas-à-pas** (projet TaskFlow, du
 | `security analyze/show` | Modèle de menace STRIDE `TM-###` généré depuis la détection projet |
 | `tests plan/coverage` | Plan de test `TP-###` (1 cas par critère) + couverture exigence→test |
 | `release report` | Rapport de release READY/NOT_READY (`--record`, `--strict`, `--allow-exec`) |
+| `ops init/plan/run/rollback/status` | Pipeline de delivery `.aidf/workflows/pipeline.yaml` (build/test/deploy, exécution conditionnée à `--allow-exec`, rollback enregistré, rapports + evidence) |
 | `help`, `version` | Aide et version |
 
 Contrat de codes de sortie : **0** succès · **1** échec/refus · **2** conflit/contradiction.

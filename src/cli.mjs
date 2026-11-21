@@ -32,6 +32,7 @@ import { designCommand } from './commands/design.mjs';
 import { securityCommand } from './commands/security.mjs';
 import { testsCommand } from './commands/tests.mjs';
 import { releaseCommand } from './commands/release.mjs';
+import { opsCommand } from './commands/ops.mjs';
 
 const COMMANDS = {
   init: { run: initCommand, summary: 'Install AIDF into a project (alias of install).' },
@@ -58,6 +59,7 @@ const COMMANDS = {
   security: { run: securityCommand, summary: 'Generate and inspect the STRIDE threat model artefact.' },
   tests: { run: testsCommand, summary: 'Generate a test plan artefact and report requirement coverage.' },
   release: { run: releaseCommand, summary: 'Build a release readiness report from gates, docs and evidence.' },
+  ops: { run: opsCommand, summary: 'Run the project delivery pipeline (build/test/deploy) with evidence and rollback.' },
   version: { run: versionCommand, summary: 'Print the AIDF version.' },
   help: { run: helpCommand, summary: 'Show this help.' },
 };

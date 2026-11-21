@@ -7,6 +7,7 @@ import { promisify } from 'node:util';
 
 const execFileAsync = promisify(execFile);
 const REPO = path.resolve(import.meta.dirname, '..');
+const PKG_NAME = JSON.parse(await fsp.readFile(path.join(REPO, 'package.json'), 'utf8')).name;
 const NPM = process.platform === 'win32' ? 'npm.cmd' : 'npm';
 const TAR = 'tar';
 
@@ -77,7 +78,7 @@ test('npm pack ships every file required by bootstrap and installs a working CLI
       { cwd: packDir },
     );
     assert.equal(installed.code, 0, installed.stderr);
-    const cli = path.join(packDir, 'app', 'node_modules', 'aidf', 'bin', 'aidf.mjs');
+    const cli = path.join(packDir, 'app', 'node_modules', PKG_NAME, 'bin', 'aidf.mjs');
     await fsp.access(cli);
 
     const version = await run(process.execPath, [cli, '--version'], { cwd: packDir });
