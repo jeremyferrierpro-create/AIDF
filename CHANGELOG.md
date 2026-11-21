@@ -3,7 +3,7 @@
 All notable changes to AIDF are documented here. This project does not use
 conventional commits; each entry names real, verified behaviour changes.
 
-## [Unreleased]
+## [0.3.1] — 2026-11-21
 
 ### Added (verified 2026-11-21)
 - `aidf ops watch` — continuous monitoring: `pipeline.monitoring.steps`

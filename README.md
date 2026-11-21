@@ -1,6 +1,6 @@
 # AIDF — AI Development Framework
 
-**Version 0.3.0** · MIT · Node.js ≥ 20.11 · zéro dépendance runtime
+**Version 0.3.1** · MIT · Node.js ≥ 20.11 · zéro dépendance runtime
 
 > AIDF est une **couche de gouvernance installable** dans un projet : elle
 > encadre le développement assisté par IA (agents, Qoder, Spec Kit) avec des

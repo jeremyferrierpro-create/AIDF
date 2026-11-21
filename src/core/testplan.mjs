@@ -91,7 +91,7 @@ export async function generateTestPlan(root, options = {}) {
       type: 'generated',
       author: 'aidf',
       createdAt: now,
-      generator: 'test-plan@0.3.0',
+      generator: 'test-plan@0.3.1',
     },
     links: {
       covers: requirements.map((r) => r.id),

@@ -109,7 +109,7 @@ export async function docsCommand(argv, ctx) {
         ...(frontmatter ?? {}),
         doc,
         status,
-        version: frontmatter?.version ?? '0.3.0',
+        version: frontmatter?.version ?? '0.3.1',
         updated: new Date().toISOString().slice(0, 10),
         ...(args.by ? { validated_by: args.by } : {}),
       }, body);
