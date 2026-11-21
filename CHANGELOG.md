@@ -3,10 +3,14 @@
 All notable changes to AIDF are documented here. This project does not use
 conventional commits; each entry names real, verified behaviour changes.
 
-## [Unreleased] — 0.2.0 (2026-11-21)
+## [0.2.0] — 2026-11-21
 
-L0 stabilises the 0.1.0 base before any persisted artefact schema change. The
-version is intentionally not bumped until L0 is accepted.
+AIDF 0.2.0 turns the 0.1.0 governance base into a full engineering framework:
+canonical artefacts with traceability, a deterministic technology decision
+engine, design workflows with fallback mockups, resource and third-party
+skill management, an OpenCode adapter with real runtime proof, a STRIDE
+threat-model generator, test planning, generated documentation and a
+release readiness report. Migration from 0.1.0 is additive and tested.
 
 ### Added (verified 2026-11-21)
 - Resource Engine v2: `aidf resources inventory|coverage|reconcile` produce a

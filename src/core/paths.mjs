@@ -4,7 +4,7 @@ import { existsSync } from '../util/fsx.mjs';
 
 export const FRAMEWORK_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 export const AIDF_DIR = '.aidf';
-export const AIDF_VERSION = '0.1.0';
+export const AIDF_VERSION = '0.2.0';
 
 export const DOCUMENTS = [
   'PRD',

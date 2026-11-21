@@ -1,6 +1,6 @@
 # AIDF — AI Development Framework
 
-**Version 0.1.0** · MIT · Node.js ≥ 20.11 · zéro dépendance runtime
+**Version 0.2.0** · MIT · Node.js ≥ 20.11 · zéro dépendance runtime
 
 > AIDF est une **couche de gouvernance installable** dans un projet : elle
 > encadre le développement assisté par IA (agents, Qoder, Spec Kit) avec des
@@ -107,11 +107,11 @@ AGENTS.md                    bloc managé (votre contenu préservé)
 `VALIDATION.md` (les mesures), `LIMITATIONS.md`, `COMPATIBILITY.md`,
 `INVENTORY.md`, `FRAMEWORK.md`.
 
-**Journal** : `CHANGELOG.md` (v0.1.0 : liste complète des ajouts/correctifs).
+**Journal** : `CHANGELOG.md` (v0.2.0 : moteurs artefacts/requirements/traceability/décision/design, inventaire ressources, skills tierces, adaptateur OpenCode, threat model, test plan, docs generate, release report, migration 0.1.0→0.2.0 prouvée).
 
 ## Preuves de qualité (mesurées, pas déclarées)
 
-- **43/43 tests** `node --test` (incluant un E2E du CLI : install → doctor →
+- **212/212 tests** `node --test` (incluant un E2E du CLI : install → doctor →
   scan → skills → context → gate → config → speckit → uninstall).
 - **E2E en situation réelle** : projet TaskFlow gouverné de bout en bout,
   2 bugs réels détectés/corrigés par les gates, conflit d'édition humain

@@ -3,6 +3,10 @@
 - Date: 2026-11-21
 - Branche: `feat/aidf-0.2.0`
 - Baseline mesurée: `npm test` → **200/200 PASS** (après correction de 3 régressions WIP)
+- État au 2026-11-21 (release 0.2.0): `npm test` → **212/212 PASS**, version `0.2.0`
+  (`AIDF_VERSION` + `package.json`), packaging npm revérifié, migration 0.1.0→0.2.0
+  prouvée (`tests/migration.test.mjs` + copie réelle de l'install 0.1.0 : 148→198
+  fichiers gérés, 0 conflit).
 - Méthode: inspection du code réel + exécution réelle des commandes sur `../resources/`
   et sur un projet temporaire (`install --adapter opencode` + `resources inventory --write`
   + `skills sources` + `skills enable owasp-security`).
@@ -60,7 +64,7 @@ Régressions WIP corrigées le 2026-11-21:
 | Adaptateur | État | Limite |
 |---|---|---|
 | qoder | CONTRACT-PROVEN | runtime (règles activées, hooks, `/skills`) NOT_PROVEN — nécessite session IDE réelle |
-| generic (AGENTS.md) | PROVEN | bloc managé idempotent |
+| generic (AGENTS.md) | PROVEN | bloc managé idempotent + skills built-in installés sous `.aidf/skills/` (découverts via registry ; chargement runtime = responsabilité de l'agent hôte) |
 | opencode | **PROVEN (runtime, 2026-11-21)** | session réelle `opencode run` : l'agent a cité les bonnes commandes AIDF et listé les skills `aidf-*`/`owasp-security` ; `opencode debug skill` découvre les 14 skills **uniquement si le projet est un worktree git** (vérifié : sans `.git`, skills ignorés → check `git-worktree` ajouté, PARTIAL le cas échéant) |
 | autres IDE | ABSENT | aucun adaptateur supplémentaire |
 

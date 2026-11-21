@@ -71,10 +71,13 @@ test('qoder verification fails when a rule or skill is missing', async () => {
   assert.equal(result.status, 'FAIL');
 });
 
-test('generic adapter only manages the AGENTS.md block', async () => {
+test('generic adapter manages AGENTS.md and installs built-in skills under .aidf/skills', async () => {
   const adapter = new GenericAdapter();
   const { root, actions } = await installAdapter(adapter, false);
-  assert.deepEqual(actions.map((a) => a.path), ['AGENTS.md']);
+  const paths = actions.map((a) => a.path);
+  assert.ok(paths.includes('AGENTS.md'));
+  assert.equal(paths.filter((p) => p.startsWith('.aidf/skills/') && p.endsWith('/SKILL.md')).length, 13);
+  assert.ok(await exists(path.join(root, '.aidf', 'skills', 'aidf-project-context', 'SKILL.md')));
   const result = await adapter.verify({ root, frameworkRoot });
   assert.equal(result.status, 'PROVEN');
   const text = await fsp.readFile(path.join(root, 'AGENTS.md'), 'utf8');
