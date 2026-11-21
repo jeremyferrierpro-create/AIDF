@@ -3,10 +3,44 @@
 All notable changes to AIDF are documented here. This project does not use
 conventional commits; each entry names real, verified behaviour changes.
 
-## [Unreleased] — 0.2.0 L0 (2026-11-20)
+## [Unreleased] — 0.2.0 (2026-11-21)
 
 L0 stabilises the 0.1.0 base before any persisted artefact schema change. The
 version is intentionally not bumped until L0 is accepted.
+
+### Added (verified 2026-11-21)
+- Resource Engine v2: `aidf resources inventory|coverage|reconcile` produce a
+  file-level sha256 manifest, a licence policy per resource, duplicate-skill
+  detection and lock/manifest drift reconciliation. Verified on the real
+  `resources/` corpus: 18 resources, 12 533 files, 81 SKILL.md (74 unique
+  AVAILABLE, 7 DUPLICATE), 23 secret-like paths skipped.
+- Skills Engine v2: `aidf skills sources|catalog` builds the third-party skill
+  catalogue with licence-derived statuses; `aidf skills enable <id>` copies one
+  canonical skill into the active adapter directory with an `AIDF-SOURCE.json`
+  provenance file; executables and secrets are never copied unless
+  `--allow-scripts` is given. Verified by a real copy of `owasp-security`.
+- OpenCode adapter: `aidf install --adapter opencode` writes `AGENTS.md` and
+  the 13 built-in skills under `.opencode/skills/`; verification is
+  CONTRACT-PROVEN (runtime discovery NOT_PROVEN).
+- Artefact schemas and validation (`src/core/artefacts`, `assets/schemas/`),
+  requirements registry and traceability chain (L1-B/L1-C partial).
+- Technology Decision Engine (deterministic analyzer + decision document
+  generator; LLM analyzer present but NOT_PROVEN without `AI_MODEL`).
+- Design Engineering engine (complexity classifier, per-complexity workflows,
+  SVG/HTML fallback mockups; Figma integration NOT_PROVEN).
+- Gap matrix: `docs/aidf/MATRICE-0.1.0-vers-0.2.0.md`.
+
+### Fixed (2026-11-21)
+- `resources inspect` crashed on files larger than 2 GiB (whole-file
+  `readFile`): hashing is now capped at 64 MiB with explicit `skipped`
+  counters; secret-like paths are never opened.
+- MODULES corpus exclusions extended to media/binaries (ISO, mp4, archives,
+  installers) matching its documented course-document scope.
+- Packaging test: GNU tar on Windows treated `C:\…` tarballs as remote hosts;
+  `--force-local` and relative paths fix pack/list/extract/pack-install.
+- Adapter registry test updated for the new `opencode` adapter.
+
+Test suite: 200/200 PASS (`node --test "tests/**/*.test.mjs"`).
 
 ### Fixed
 - npm packaging now ships `INSTALLATION.md`, `UTILISATION.md`, `QODER.md`,
