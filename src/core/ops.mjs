@@ -36,6 +36,10 @@ pipeline:
       name: Rollback deploy
       command: ""
       timeoutMs: 300000
+monitoring:
+  # Optional continuous checks run by "aidf ops watch".
+  # Same step schema as pipeline.steps; typically kind: verify.
+  steps: []
 `;
 
 export async function loadPipeline(root) {
@@ -48,6 +52,9 @@ export async function loadPipeline(root) {
     return { present: true, file, pipeline: null, errors: [`pipeline.yaml is not valid YAML: ${error.message}`] };
   }
   const pipeline = parsed?.pipeline ?? null;
+  if (pipeline && typeof pipeline === 'object' && parsed?.monitoring !== undefined) {
+    pipeline.monitoring = parsed.monitoring;
+  }
   const errors = validatePipeline(pipeline);
   return { present: true, file, pipeline, errors };
 }
@@ -95,7 +102,44 @@ export function validatePipeline(pipeline) {
       }
     }
   }
+  if (pipeline.monitoring !== undefined) {
+    if (!pipeline.monitoring || typeof pipeline.monitoring !== 'object' || Array.isArray(pipeline.monitoring)) {
+      errors.push('pipeline.monitoring must be an object.');
+    } else if (pipeline.monitoring.steps !== undefined) {
+      errors.push(...validateSteps(pipeline.monitoring.steps, 'monitoring.steps'));
+    }
+  }
   return errors;
+}
+
+export function validateSteps(steps, at) {
+  const errors = [];
+  if (!Array.isArray(steps)) {
+    errors.push(`${at} must be an array.`);
+    return errors;
+  }
+  const ids = new Set();
+  for (const [i, step] of steps.entries()) {
+    const where = `${at}[${i}]`;
+    if (!step || typeof step !== 'object') {
+      errors.push(`${where}: step must be an object.`);
+      continue;
+    }
+    if (!step.id || typeof step.id !== 'string') errors.push(`${where}: missing string id.`);
+    else if (ids.has(step.id)) errors.push(`${where}: duplicate id "${step.id}".`);
+    else ids.add(step.id);
+    if (step.kind !== undefined && !OPS_STEP_KINDS.includes(step.kind)) {
+      errors.push(`${where} (${step.id ?? '?'}): unknown kind "${step.kind}".`);
+    }
+    if (!step.command || typeof step.command !== 'string' || step.command.trim() === '') {
+      errors.push(`${where} (${step.id ?? '?'}): missing command.`);
+    }
+  }
+  return errors;
+}
+
+export function monitoringSteps(pipeline) {
+  return pipeline?.monitoring?.steps ?? [];
 }
 
 /**
@@ -239,6 +283,128 @@ export async function runRollback(root, options = {}) {
     runId, startedAt, finishedAt: new Date().toISOString(), verdict,
     rolledBackRun: last.runId, steps: results,
   };
+}
+
+/**
+ * Run monitoring.steps repeatedly. Requires a bound: options.cycles or
+ * options.durationMs, otherwise the watch would run forever.
+ * Stops on the first non-PASS step result or when the bound is reached.
+ */
+export async function watchPipeline(root, options = {}) {
+  const { pipeline, errors } = await loadPipeline(root);
+  const startedAt = new Date().toISOString();
+  const runId = `ops-watch-${timestampSlug()}`;
+  const allowExec = Boolean(options.allowExec);
+  const cycles = options.cycles ?? null;
+  const durationMs = options.durationMs ?? null;
+
+  if (!pipeline) {
+    return {
+      runId, startedAt, finishedAt: new Date().toISOString(), verdict: 'ABSENT',
+      reason: errors[0] ?? 'No .aidf/workflows/pipeline.yaml found. Run "aidf ops init".', errors, cycles: [],
+    };
+  }
+  if (errors.length) {
+    return { runId, startedAt, finishedAt: new Date().toISOString(), verdict: 'INVALID', errors, cycles: [] };
+  }
+  const steps = monitoringSteps(pipeline);
+  if (steps.length === 0) {
+    return {
+      runId, startedAt, finishedAt: new Date().toISOString(), verdict: 'NOT_PROVEN',
+      reason: 'pipeline.monitoring.steps is empty. Configure health-check commands first.', cycles: [],
+    };
+  }
+  if (!cycles && !durationMs) {
+    return {
+      runId, startedAt, finishedAt: new Date().toISOString(), verdict: 'NOT_PROVEN',
+      reason: 'Watch requires a bound: pass --cycles <n> or --duration <seconds>.', cycles: [],
+    };
+  }
+
+  const intervalMs = Math.max(0, (options.intervalSeconds ?? 60) * 1000);
+  const deadline = durationMs ? Date.now() + durationMs : null;
+  const maxCycles = cycles ?? Number.MAX_SAFE_INTEGER;
+  const results = [];
+  let cycle = 0;
+  let stoppedAt = null;
+
+  while (cycle < maxCycles && (!deadline || Date.now() < deadline)) {
+    cycle += 1;
+    const cycleResults = [];
+    for (const step of steps) {
+      if (!allowExec) {
+        cycleResults.push({ id: step.id, status: 'NOT_PROVEN', reason: 'Execution not permitted.' });
+        break;
+      }
+      const outcome = await runCommand(step.command, { cwd: root, timeoutMs: step.timeoutMs ?? 300000 });
+      const status = outcome.ok ? 'PASS' : outcome.status === 'BLOCKED' ? 'BLOCKED' : 'FAIL';
+      cycleResults.push({
+        id: step.id, kind: step.kind ?? 'verify', status, command: step.command,
+        exitCode: outcome.exitCode ?? null, durationMs: outcome.durationMs ?? null,
+        reason: outcome.reason ?? (outcome.ok ? 'Exit code 0.' : `Exit code ${outcome.exitCode}.`),
+      });
+      if (status !== 'PASS') break;
+    }
+    results.push({ cycle, at: new Date().toISOString(), steps: cycleResults });
+    const failed = cycleResults.find((s) => s.status !== 'PASS');
+    if (failed) {
+      stoppedAt = `${failed.id} (cycle ${cycle})`;
+      break;
+    }
+    if (cycle < maxCycles && (!deadline || Date.now() + intervalMs < deadline)) {
+      await new Promise((r) => setTimeout(r, intervalMs));
+    }
+  }
+
+  const allPass = results.length > 0 && results.every((c) => c.steps.every((s) => s.status === 'PASS'));
+  const verdict = allPass ? 'PASS'
+    : results.some((c) => c.steps.some((s) => s.status === 'BLOCKED')) ? 'BLOCKED'
+    : results.some((c) => c.steps.some((s) => s.status === 'FAIL')) ? 'FAIL'
+    : 'NOT_PROVEN';
+
+  return {
+    runId, startedAt, finishedAt: new Date().toISOString(), verdict, stoppedAt,
+    cyclesRun: results.length, cycles: results,
+  };
+}
+
+export function renderWatchMarkdown(run) {
+  const lines = [];
+  lines.push('# AIDF Ops Watch Report');
+  lines.push('');
+  lines.push(`- Run: ${run.runId}`);
+  lines.push(`- Started: ${run.startedAt}`);
+  lines.push(`- Finished: ${run.finishedAt}`);
+  lines.push(`- Cycles run: ${run.cyclesRun ?? 0}`);
+  lines.push(`- Verdict: **${run.verdict}**`);
+  if (run.stoppedAt) lines.push(`- Stopped at: ${run.stoppedAt}`);
+  if (run.reason) lines.push(`- Reason: ${run.reason}`);
+  lines.push('');
+  for (const c of run.cycles ?? []) {
+    lines.push(`## Cycle ${c.cycle} — ${c.at}`);
+    lines.push('');
+    lines.push('| Step | Status | Exit | Reason |');
+    lines.push('|---|---|---|---|');
+    for (const s of c.steps) lines.push(`| ${s.id} | ${s.status} | ${s.exitCode ?? '-'} | ${s.reason ?? ''} |`);
+    lines.push('');
+  }
+  lines.push('## Limitations');
+  lines.push('');
+  lines.push('- A PASS verdict means every monitoring command exited 0 during the observed window; it is not a guarantee of future health.');
+  lines.push('- Monitoring commands are project-owned configuration; review pipeline.yaml before enabling execution.');
+  lines.push('');
+  return `${lines.join('\n')}\n`;
+}
+
+export async function writeWatchReport(root, run) {
+  const reportsDir = aidfPaths(root).reports;
+  await ensureDir(reportsDir);
+  const stamp = `${run.startedAt.slice(0, 10)}-${run.runId}`;
+  const jsonPath = path.join(reportsDir, `OPS-WATCH-${stamp}.json`);
+  const mdPath = path.join(reportsDir, `OPS-WATCH-${stamp}.md`);
+  await writeJson(jsonPath, run);
+  await writeAtomic(mdPath, renderWatchMarkdown(run));
+  return { json: toPosix(jsonPath), markdown: toPosix(mdPath) };
 }
 
 export function renderOpsMarkdown(run, kind = 'run') {

@@ -15,7 +15,7 @@ Status: VALIDATED for the cells marked; others are declared, not exercised.
 
 | Adapter | Status | Project scope | Notes |
 |---|---|---|---|
-| qoder | CONTRACT-PROVEN (install + verifier); runtime activation requires manual UI steps | `.qoder/rules`, `.qoder/skills`, `.qoder/agents`, `.qoder/settings.json`, `AGENTS.md` | validated against Qoder 1.106.3 layout + official docs |
+| qoder | PROVEN runtime partiel (2026-11-21, vérifié par un humain, evidence `runtime-verification`) : `/aidf` liste ~14 skills `aidf-*`, `/skills` montre `aidf-project-context` ; install + verifier restent CONTRACT-PROVEN ; règles "Always Apply" et hooks runtime non encore vérifiés | `.qoder/rules`, `.qoder/skills`, `.qoder/agents`, `.qoder/settings.json`, `AGENTS.md` | validated against Qoder 1.106.3 layout + official docs |
 | opencode | PROVEN runtime (2026-11-21): real `opencode run` session read the AIDF block and discovered project skills; requires a git worktree for project-skill discovery | `AGENTS.md`, `.opencode/skills/` | verified on OpenCode 1.18.34; non-git projects get files but no skill discovery (PARTIAL) |
 | generic | PROVEN (AGENTS.md managed block + built-in skills under `.aidf/skills/`) | `AGENTS.md`, `.aidf/skills/` | any AGENTS.md-compatible host; skills are files on disk — runtime loading depends on the agent reading the AIDF registry |
 

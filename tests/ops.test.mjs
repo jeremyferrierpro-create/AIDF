@@ -109,6 +109,62 @@ test('ops run refuses execution without --allow-exec and executes with it', { ti
   assert.equal(await fsp.readFile(path.join(root, 'rolledback.txt'), 'utf8'), 'yes');
 });
 
+test('ops watch requires a bound, permission and monitoring steps', { timeout: 60000 }, async () => {
+  const root = await project();
+
+  // No pipeline at all.
+  const absent = await run(['ops', 'watch', '--target', root, '--cycles', '1', '--allow-exec', '--json']);
+  assert.equal(parseJson(absent).run.verdict, 'ABSENT');
+
+  await fsp.writeFile(path.join(root, '.aidf', 'workflows', 'pipeline.yaml'), `schemaVersion: 1
+pipeline:
+  steps:
+    - id: build
+      kind: build
+      command: "node -e \\"process.exit(0)\\""
+monitoring:
+  steps:
+    - id: health
+      kind: verify
+      command: "node -e \\"process.exit(0)\\""
+`, 'utf8');
+
+  // No bound → NOT_PROVEN, nothing runs.
+  const unbound = await run(['ops', 'watch', '--target', root, '--allow-exec', '--json']);
+  assert.equal(parseJson(unbound).run.verdict, 'NOT_PROVEN');
+
+  // Bound but no permission → NOT_PROVEN.
+  const denied = await run(['ops', 'watch', '--target', root, '--cycles', '1', '--json']);
+  assert.equal(parseJson(denied).run.verdict, 'NOT_PROVEN');
+
+  // Permitted: real cycles run.
+  const ok = await run(['ops', 'watch', '--target', root, '--cycles', '2', '--interval', '0', '--allow-exec', '--record', '--json']);
+  assert.equal(ok.code, 0, ok.stderr);
+  const res = parseJson(ok);
+  assert.equal(res.run.verdict, 'PASS');
+  assert.equal(res.run.cyclesRun, 2);
+  assert.ok(res.evidence);
+
+  // A failing health check stops the watch honestly.
+  await fsp.writeFile(path.join(root, '.aidf', 'workflows', 'pipeline.yaml'), `schemaVersion: 1
+pipeline:
+  steps:
+    - id: build
+      kind: build
+      command: "node -e \\"process.exit(0)\\""
+monitoring:
+  steps:
+    - id: health
+      kind: verify
+      command: "node -e \\"process.exit(1)\\""
+`, 'utf8');
+  const fail = await run(['ops', 'watch', '--target', root, '--cycles', '5', '--allow-exec', '--json']);
+  const failRes = parseJson(fail);
+  assert.equal(failRes.run.verdict, 'FAIL');
+  assert.equal(failRes.run.cyclesRun, 1);
+  assert.ok(failRes.run.stoppedAt.includes('health'));
+});
+
 test('ops run stops on first failure and reports honestly', { timeout: 60000 }, async () => {
   const root = await project();
   await fsp.writeFile(path.join(root, '.aidf', 'workflows', 'pipeline.yaml'), `schemaVersion: 1

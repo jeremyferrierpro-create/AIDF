@@ -86,7 +86,7 @@ Le **premier workflow complet documenté pas-à-pas** (projet TaskFlow, du
 | `security analyze/show` | Modèle de menace STRIDE `TM-###` généré depuis la détection projet |
 | `tests plan/coverage` | Plan de test `TP-###` (1 cas par critère) + couverture exigence→test |
 | `release report` | Rapport de release READY/NOT_READY (`--record`, `--strict`, `--allow-exec`) |
-| `ops init/plan/run/rollback/status` | Pipeline de delivery `.aidf/workflows/pipeline.yaml` (build/test/deploy, exécution conditionnée à `--allow-exec`, rollback enregistré, rapports + evidence) |
+| `ops init/plan/run/rollback/watch/status` | Pipeline de delivery `.aidf/workflows/pipeline.yaml` (build/test/deploy, exécution conditionnée à `--allow-exec`, rollback enregistré, monitoring `watch` borné, rapports + evidence) |
 | `help`, `version` | Aide et version |
 
 Contrat de codes de sortie : **0** succès · **1** échec/refus · **2** conflit/contradiction.

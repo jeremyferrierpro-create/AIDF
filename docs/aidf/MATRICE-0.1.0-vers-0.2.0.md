@@ -63,7 +63,7 @@ Régressions WIP corrigées le 2026-11-21:
 
 | Adaptateur | État | Limite |
 |---|---|---|
-| qoder | CONTRACT-PROVEN | runtime (règles activées, hooks, `/skills`) NOT_PROVEN — nécessite session IDE réelle |
+| qoder | **PROVEN partiel (runtime skills, 2026-11-21, humain)** | `/aidf` liste ~14 skills `aidf-*`, `/skills` montre `aidf-project-context` (vérifié par le propriétaire, evidence `runtime-verification` enregistrée dans `.aidf/evidence/`) ; règles "Always Apply" et hooks runtime toujours NOT_PROVEN |
 | generic (AGENTS.md) | PROVEN | bloc managé idempotent + skills built-in installés sous `.aidf/skills/` (découverts via registry ; chargement runtime = responsabilité de l'agent hôte) |
 | opencode | **PROVEN (runtime, 2026-11-21)** | session réelle `opencode run` : l'agent a cité les bonnes commandes AIDF et listé les skills `aidf-*`/`owasp-security` ; `opencode debug skill` découvre les 14 skills **uniquement si le projet est un worktree git** (vérifié : sans `.git`, skills ignorés → check `git-worktree` ajouté, PARTIAL le cas échéant) |
 | autres IDE | ABSENT | aucun adaptateur supplémentaire |
@@ -85,7 +85,7 @@ Régressions WIP corrigées le 2026-11-21:
 | Classification de complexité | PROVEN | `complexity-classifier.mjs` + tests |
 | Workflows par complexité | PROVEN | `engine.mjs` + tests |
 | Wireframes SVG / maquettes HTML (fallback) | PROVEN | `fallback/*` + tests |
-| Validateurs Figma | NOT_PROVEN | `figma/validators.mjs` présent; aucune intégration Figma réelle vérifiée |
+| Client Figma réel (REST api.figma.com) | **PROVEN partiel (2026-11-21)** | `figma/validators.mjs` appelle la vraie API : token `FIGMA_TOKEN`/config vérifié (`/v1/me` → identité réelle "Jeremy Ferrier"), 401/403/404 gérés, tests unitaires avec fetch stubé ; accès à un fichier précis (`fileId`) et parité visuelle restent NOT_PROVEN |
 | Parité visuelle (capture) | NOT_PROVEN | `visual-parity/capture.mjs` présent; navigateur non vérifié |
 | Exposition CLI (`aidf design classify|run`) | PROVEN | outputs fichiers réels (SVG wireframes, CSS mockup, FALLBACK.md) |
 
@@ -120,7 +120,7 @@ Régressions WIP corrigées le 2026-11-21:
 | Phase `release` + gates | PROVEN (workflow) |
 | Rapport de release (`aidf release report`) | PROVEN | évalue tous les gates en lecture seule (pas d'enregistrement), agrège statuts docs/CHANGELOG/evidence/artefacts, écrit `.aidf/reports/RELEASE-<date>.{json,md}`, verdict READY/NOT_READY, `--strict` pour CI, `--record` pour evidence `release-report` |
 | Pipeline build/test/deploy/rollback (`aidf ops`, Unreleased) | PROVEN | `src/core/ops.mjs` + `src/commands/ops.mjs` : `.aidf/workflows/pipeline.yaml` projet, exécution séquentielle via `runCommand` (sans shell), fail-fast, `--allow-exec`/`security.allowCommandExecution` exigé, rapports `OPS-*` + evidence `ops-run`/`ops-rollback`, rollback du dernier deploy réussi. Testé e2e (`tests/ops.test.mjs`) |
-| Monitoring continu | ABSENT | pas de boucle de surveillance; `ops status` montre seulement la dernière exécution |
+| Monitoring continu (`aidf ops watch`, Unreleased) | PROVEN | `pipeline.monitoring.steps` exécutés en cycles bornés (`--cycles`/`--duration`/`--interval`), même permission `--allow-exec`, arrêt sur premier échec, rapports `OPS-WATCH-*` + evidence `ops-watch`. Tests e2e `tests/ops.test.mjs` |
 
 ## 10. Gouvernance obligatoire
 
@@ -150,7 +150,7 @@ Régressions WIP corrigées le 2026-11-21:
 |---|---|---|
 | D1 | Licence `dictionary-of-ai-coding` | RÉSOLU 2026-11-21 — MIT déclarée par le propriétaire (fichier LICENSE absent du clone, déclaration enregistrée dans sources.yaml) |
 | D2 | Commit du WIP + corrections baseline | En attente d'autorisation |
-| D3 | Vérification runtime IDE | OpenCode PROVEN (session réelle) ; Qoder reste CONTRACT-PROVEN |
+| D3 | Vérification runtime IDE | OpenCode PROVEN (session réelle) ; Qoder PROVEN partiel (skills runtime vérifiés par humain ; règles/hooks restent NOT_PROVEN) |
 | D4 | `AI_MODEL` pour le Decision Engine LLM | RÉSOLU 2026-11-21 — hors périmètre par décision : interprétation déléguée à l'agent hôte, `analyzer-llm.mjs` supprimé |
 | D5 | Commandes CLI manquantes | FAIT pour artefacts/requirements/traceability/decision/design/security/tests/release ; `docs generate` implémenté en PARTIAL (vues Markdown des artefacts, pas la dérivation ADR-004) |
 | D6 | Publication npm / push git | Non autorisé |

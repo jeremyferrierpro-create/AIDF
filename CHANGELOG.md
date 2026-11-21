@@ -3,6 +3,23 @@
 All notable changes to AIDF are documented here. This project does not use
 conventional commits; each entry names real, verified behaviour changes.
 
+## [Unreleased]
+
+### Added (verified 2026-11-21)
+- `aidf ops watch` — continuous monitoring: `pipeline.monitoring.steps`
+  (same step schema, typically `kind: verify`) run in bounded cycles via
+  `--cycles`/`--duration`/`--interval`; same `--allow-exec` permission
+  model, stops on first non-PASS, writes `OPS-WATCH-*` reports and
+  `ops-watch` evidence. Verified by `tests/ops.test.mjs`.
+- Real Figma REST client in `figma/validators.mjs` (replaces the mock):
+  `GET /v1/me` and `GET /v1/files/:id` against api.figma.com with the
+  token from `figma.apiKey`/`figma.token` or `FIGMA_TOKEN`. Verified live:
+  the supplied token resolves to a real Figma identity. File-level access
+  and visual parity remain NOT_PROVEN until a `fileId` is exercised.
+
+### Changed
+- Figma unit tests rewritten against a stubbed `fetch` (no network in CI).
+
 ## [0.3.0] — 2026-11-21
 
 ### Added (verified 2026-11-21)

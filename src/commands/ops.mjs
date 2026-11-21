@@ -8,12 +8,13 @@ import { recordEvidence } from '../core/evidence.mjs';
 import {
   PIPELINE_TEMPLATE, loadPipeline, runPipeline, runRollback,
   recordLastRun, loadLastRun, writeOpsReport,
+  watchPipeline, writeWatchReport, monitoringSteps,
 } from '../core/ops.mjs';
 
 export function opsArgSpec() {
   return {
     booleans: ['json', 'help', 'allow-exec', 'record', 'force'],
-    strings: ['step', 'target'],
+    strings: ['step', 'target', 'cycles', 'duration', 'interval'],
     aliases: { h: 'help' },
   };
 }
@@ -25,7 +26,7 @@ function opsEnabled(config, args) {
 export async function opsCommand(argv, ctx) {
   const args = parseArgs(argv, opsArgSpec());
   if (args.help || args._[0] === 'help') {
-    ctx.logger.info('Usage: aidf ops <init|plan|run|rollback|status> [--allow-exec] [--step <id>] [--record] [--json]');
+    ctx.logger.info('Usage: aidf ops <init|plan|run|rollback|watch|status> [--allow-exec] [--step <id>] [--cycles <n> | --duration <s>] [--interval <s>] [--record] [--json]');
     return 0;
   }
   const root = resolveProjectRoot({ target: args.target, cwd: process.cwd() });
@@ -84,6 +85,7 @@ export async function opsCommand(argv, ctx) {
       ctx.logger.info(`  ${s.id} [${s.kind ?? 'custom'}] ${s.name ?? ''} — ${s.command}`);
     }
     ctx.logger.info(`  rollback steps: ${pipeline.rollback?.length ?? 0}`);
+    ctx.logger.info(`  monitoring steps: ${monitoringSteps(pipeline).length}`);
     ctx.logger.info('Dry run only: no command was executed. Use "aidf ops run --allow-exec" to execute.');
     return 0;
   }
@@ -129,6 +131,55 @@ export async function opsCommand(argv, ctx) {
     return run.verdict === 'PASS' ? 0 : run.verdict === 'INVALID' || run.verdict === 'ABSENT' ? 1 : 1;
   }
 
+  if (sub === 'watch') {
+    const allowExec = opsEnabled(config, args);
+    const cycles = args.cycles !== undefined ? Number.parseInt(args.cycles, 10) : null;
+    const durationMs = args.duration !== undefined ? Number.parseInt(args.duration, 10) * 1000 : null;
+    const intervalSeconds = args.interval !== undefined ? Number.parseInt(args.interval, 10) : 60;
+    if ((args.cycles !== undefined && (!Number.isInteger(cycles) || cycles < 1))
+      || (args.duration !== undefined && (!Number.isInteger(durationMs / 1000) || durationMs <= 0))
+      || !Number.isInteger(intervalSeconds) || intervalSeconds < 0) {
+      ctx.logger.error('Invalid watch bounds: --cycles <n>=positive int, --duration <seconds>=positive int, --interval <seconds>=non-negative int.');
+      return 1;
+    }
+    const run = await watchPipeline(root, { allowExec, cycles, durationMs, intervalSeconds });
+    const files = await writeWatchReport(root, run);
+
+    let evidence = null;
+    if (args.record) {
+      evidence = await recordEvidence(root, {
+        type: 'ops-watch',
+        status: run.verdict === 'PASS' ? 'PASS' : run.verdict === 'NOT_PROVEN' ? 'NOT_PROVEN' : 'FAIL',
+        summary: `Ops watch ${run.runId}: ${run.verdict} (${run.cyclesRun ?? 0} cycle(s)${run.stoppedAt ? `, stopped at ${run.stoppedAt}` : ''}).`,
+        createdBy: 'aidf',
+        files: [files.json, files.markdown],
+        checks: (run.cycles ?? []).flatMap((c) => c.steps.map((s) => ({ id: `${c.cycle}:${s.id}`, status: s.status, reason: s.reason }))),
+        limitations: [
+          'PASS covers the observed window only; it is not a guarantee of future health.',
+          'Monitoring commands are project-owned configuration; review pipeline.yaml before enabling execution.',
+        ],
+      });
+    }
+
+    if (ctx.json) {
+      process.stdout.write(`${JSON.stringify({ run, files, evidence }, null, 2)}\n`);
+    } else {
+      ctx.logger.info(`Ops watch ${run.runId}: ${run.verdict} (${run.cyclesRun ?? 0} cycle(s))`);
+      for (const c of (run.cycles ?? []).slice(-3)) {
+        for (const s of c.steps) {
+          const line = `  cycle ${c.cycle} ${s.id}: ${s.status}`;
+          if (s.status === 'PASS') ctx.logger.info(line);
+          else ctx.logger.error(`${line} — ${s.reason}`);
+        }
+      }
+      ctx.logger.info(`  report: ${files.markdown}`);
+      if (evidence) ctx.logger.info(`  evidence: ${evidence.id}`);
+      if (run.reason) ctx.logger.warn(`  ${run.reason}`);
+      if (!allowExec) ctx.logger.warn('Execution was not permitted: pass --allow-exec or set security.allowCommandExecution=true.');
+    }
+    return run.verdict === 'PASS' ? 0 : 1;
+  }
+
   if (sub === 'rollback') {
     const allowExec = opsEnabled(config, args);
     const run = await runRollback(root, { allowExec });
@@ -162,6 +213,6 @@ export async function opsCommand(argv, ctx) {
     return run.verdict === 'PASS' ? 0 : 1;
   }
 
-  ctx.logger.error(`Unknown ops subcommand: ${sub} (init|plan|run|rollback|status)`);
+  ctx.logger.error(`Unknown ops subcommand: ${sub} (init|plan|run|rollback|watch|status)`);
   return 1;
 }
