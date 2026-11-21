@@ -85,7 +85,7 @@ Régressions WIP corrigées le 2026-11-21:
 | Classification de complexité | PROVEN | `complexity-classifier.mjs` + tests |
 | Workflows par complexité | PROVEN | `engine.mjs` + tests |
 | Wireframes SVG / maquettes HTML (fallback) | PROVEN | `fallback/*` + tests |
-| Client Figma réel (REST api.figma.com) | **PROVEN partiel (2026-11-21)** | `figma/validators.mjs` appelle la vraie API : token `FIGMA_TOKEN`/config vérifié (`/v1/me` → identité réelle "Jeremy Ferrier"), 401/403/404 gérés, tests unitaires avec fetch stubé ; accès à un fichier précis (`fileId`) et parité visuelle restent NOT_PROVEN |
+| Client Figma réel (REST api.figma.com) | **PROVEN (2026-11-21)** | `figma/validators.mjs` appelle la vraie API : token vérifié (`/v1/me` → identité réelle), fichier `2fio4wPbYEFEbqY2k800E0` « Mes Orchidées » accessible → `validateFigma` = `fully_verified` (evidence `figma-verification` dans `.aidf/evidence/`) ; token via `figma.apiKey`/`figma.token` ou `FIGMA_TOKEN` ; parité visuelle reste NOT_PROVEN |
 | Parité visuelle (capture) | NOT_PROVEN | `visual-parity/capture.mjs` présent; navigateur non vérifié |
 | Exposition CLI (`aidf design classify|run`) | PROVEN | outputs fichiers réels (SVG wireframes, CSS mockup, FALLBACK.md) |
 

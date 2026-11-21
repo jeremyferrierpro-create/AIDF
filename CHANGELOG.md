@@ -14,8 +14,9 @@ conventional commits; each entry names real, verified behaviour changes.
 - Real Figma REST client in `figma/validators.mjs` (replaces the mock):
   `GET /v1/me` and `GET /v1/files/:id` against api.figma.com with the
   token from `figma.apiKey`/`figma.token` or `FIGMA_TOKEN`. Verified live:
-  the supplied token resolves to a real Figma identity. File-level access
-  and visual parity remain NOT_PROVEN until a `fileId` is exercised.
+  the supplied token resolves to a real Figma identity and a real file
+  (`validateFigma` → `fully_verified`). Visual parity capture remains
+  NOT_PROVEN.
 
 ### Changed
 - Figma unit tests rewritten against a stubbed `fetch` (no network in CI).
