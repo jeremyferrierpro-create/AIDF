@@ -14,7 +14,7 @@ runtime non prouvé), PARTIAL, NOT_PROVEN, BLOCKED, ABSENT.
 
 | Domaine | État | Preuve |
 |---|---|---|
-| 18 verbes CLI | PROVEN | `src/cli.mjs` COMMANDS; e2e `tests/cli.test.mjs` |
+| 23 verbes CLI | PROVEN | `src/cli.mjs` COMMANDS; e2e `tests/cli.test.mjs` + `tests/cli.engines.test.mjs` |
 | Phases/gates/checks | PROVEN | `assets/workflows/`, `src/core/workflow.mjs`, gates tests |
 | Evidence Engine + `verifyEvidenceChain` | PROVEN | `src/core/evidence.mjs`, `evidence verify` |
 | Packaging npm | PROVEN | `tests/packaging.test.mjs` (pack → install → init → doctor) |
@@ -61,7 +61,7 @@ Régressions WIP corrigées le 2026-11-21:
 |---|---|---|
 | qoder | CONTRACT-PROVEN | runtime (règles activées, hooks, `/skills`) NOT_PROVEN — nécessite session IDE réelle |
 | generic (AGENTS.md) | PROVEN | bloc managé idempotent |
-| opencode | CONTRACT-PROVEN | plan + vérif fichiers OK; runtime NOT_PROVEN — OpenCode est installé (`opencode.cmd` présent), session réelle non exécutée |
+| opencode | **PROVEN (runtime, 2026-11-21)** | session réelle `opencode run` : l'agent a cité les bonnes commandes AIDF et listé les skills `aidf-*`/`owasp-security` ; `opencode debug skill` découvre les 14 skills **uniquement si le projet est un worktree git** (vérifié : sans `.git`, skills ignorés → check `git-worktree` ajouté, PARTIAL le cas échéant) |
 | autres IDE | ABSENT | aucun adaptateur supplémentaire |
 
 ## 5. Decision Engine (LOT 5)
@@ -71,8 +71,8 @@ Régressions WIP corrigées le 2026-11-21:
 | Moteur déterministe (contraintes dures/mous, ranking) | PROVEN | `src/core/technology-decision/*` + tests |
 | Génération document de décision (JSON/MD) | PROVEN | `generator.mjs` + tests |
 | Analyse LLM | NOT_PROVEN | `AI_MODEL` non configuré; chemins LLM échouent explicitement (comportement honnête) |
-| Exposition CLI (`aidf decision …`) | ABSENT | moteur = bibliothèque interne, non câblé dans `cli.mjs` |
-| ADR persistés dans `.aidf/artefacts/` | PARTIAL | schémas `assets/schemas/decision` + validateur; pas de commande CLI |
+| Exposition CLI (`aidf decision evaluate`) | PROVEN | commande + artefact `decisions/*.json` + export MD |
+| ADR persistés dans `.aidf/artefacts/decisions/` | PROVEN | enveloppe artefact validée, statut DRAFT, approbation humaine requise |
 
 ## 6. Design Engine (LOT 6)
 
@@ -83,7 +83,7 @@ Régressions WIP corrigées le 2026-11-21:
 | Wireframes SVG / maquettes HTML (fallback) | PROVEN | `fallback/*` + tests |
 | Validateurs Figma | NOT_PROVEN | `figma/validators.mjs` présent; aucune intégration Figma réelle vérifiée |
 | Parité visuelle (capture) | NOT_PROVEN | `visual-parity/capture.mjs` présent; navigateur non vérifié |
-| Exposition CLI (`aidf design …`) | ABSENT | non câblé |
+| Exposition CLI (`aidf design classify|run`) | PROVEN | outputs fichiers réels (SVG wireframes, CSS mockup, FALLBACK.md) |
 
 ## 7. Security by Design & Test Engineering (LOT 7)
 
@@ -101,10 +101,12 @@ Régressions WIP corrigées le 2026-11-21:
 |---|---|---|
 | Enveloppe + validation schémas artefacts | PROVEN | `src/core/artefacts/*` + `artefacts.validation.test.mjs` |
 | Registre exigences | PROVEN | `src/core/requirements/registry.mjs` + tests |
-| Chaîne de traçabilité (liens) | PROVEN | `src/core/traceability/chain.mjs` + tests |
-| Contrat de liens L1-C complet | NOT_PROVEN | test `traceability.link.test.mjs` retiré au commit 27a9581 (non prouvé) |
-| Commandes CLI artefacts/requirements/traceability/docs generate | ABSENT | ADR-006 proposé, non implémenté |
-| Couverture déterministe exigence→test→preuve | PARTIAL | logique dans `traceability/chain.mjs`; non exposée en CLI |
+| Chaîne de traçabilité (liens) | PROVEN | `src/core/traceability/chain.mjs` + tests ; `findMissingLinks` corrigé (résolution réelle des cibles + préfixes d'ID) |
+| Contrat de liens L1-C complet | PARTIAL | test `traceability.link.test.mjs` retiré au commit 27a9581; commandes `traceability` exposées mais la sémantique complète des liens reste à consolider |
+| Commandes CLI artefacts/requirements/traceability | PROVEN | `aidf artefacts|requirements|traceability` implémentées + `tests/cli.engines.test.mjs` (5 tests e2e) |
+| Commandes CLI decision/design | PROVEN | `aidf decision evaluate` (artefact DRAFT + approbation humaine requise) et `aidf design classify|run` (outputs SVG/CSS/MD réels) |
+| `docs generate/regenerate/reconcile` (L1-D) | ABSENT | non implémenté |
+| Couverture déterministe exigence→test→preuve | PARTIAL | `requirements coverage` exposée (basée sur l'Evidence Engine); non encore reliée aux artefacts de test |
 
 ## 9. Delivery & Operations (LOT 8)
 
@@ -140,9 +142,9 @@ Régressions WIP corrigées le 2026-11-21:
 
 | # | Décision | Statut |
 |---|---|---|
-| D1 | Licence `dictionary-of-ai-coding` (aucun LICENSE dans le clone) | BLOCKED — lever par le propriétaire ou accepter index-only permanent |
+| D1 | Licence `dictionary-of-ai-coding` | RÉSOLU 2026-11-21 — MIT déclarée par le propriétaire (fichier LICENSE absent du clone, déclaration enregistrée dans sources.yaml) |
 | D2 | Commit du WIP + corrections baseline | En attente d'autorisation |
-| D3 | Vérification runtime OpenCode/Qoder (session agent réelle) | Possible localement (binaires installés) — à planifier |
+| D3 | Vérification runtime IDE | OpenCode PROVEN (session réelle) ; Qoder reste CONTRACT-PROVEN |
 | D4 | `AI_MODEL` pour le Decision Engine LLM | NOT_PROVEN tant que non configuré — le déterministe reste le chemin prouvé |
-| D5 | Commandes CLI manquantes (artefacts, requirements, traceability, decision, design) | À prioriser — ADR-006 existe |
+| D5 | Commandes CLI manquantes | FAIT pour artefacts/requirements/traceability/decision/design ; reste `docs generate` (L1-D) |
 | D6 | Publication npm / push git | Non autorisé |

@@ -37,6 +37,7 @@ export class OpenCodeAdapter extends Adapter {
       limitations: [
         'OpenCode skill discovery is file-based; AIDF can write .opencode/skills/<id>/SKILL.md but cannot prove the running session advertised it.',
         'AGENTS.md is loaded as instructions; runtime compliance is not observable from the filesystem.',
+        'Verified 2026-11-21: OpenCode only discovers project skills when the project root is a git worktree (a .git entry). Without it, .opencode/skills/* is silently ignored.',
       ],
     };
   }
@@ -86,6 +87,14 @@ export class OpenCodeAdapter extends Adapter {
       id: 'skill-files',
       status: installed === catalog.length ? 'PASS' : installed === 0 ? 'FAIL' : 'PARTIAL',
       evidence: `${installed}/${catalog.length} built-in SKILL.md files present`,
+    });
+    const isGitWorktree = await exists(path.join(root, '.git'));
+    checks.push({
+      id: 'git-worktree',
+      status: isGitWorktree ? 'PASS' : 'PARTIAL',
+      evidence: isGitWorktree
+        ? 'Project is a git worktree; OpenCode can discover project skills.'
+        : 'No .git entry: OpenCode ignores .opencode/skills/* outside a git worktree (verified 2026-11-21). Run git init or use another adapter.',
     });
     checks.push({
       id: 'runtime-skill-discovery',

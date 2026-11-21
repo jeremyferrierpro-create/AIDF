@@ -24,6 +24,11 @@ import { docsCommand } from './commands/docs.mjs';
 import { contextCommand } from './commands/context.mjs';
 import { speckitCommand } from './commands/speckit.mjs';
 import { configCommand } from './commands/config.mjs';
+import { artefactsCommand } from './commands/artefacts.mjs';
+import { requirementsCommand } from './commands/requirements.mjs';
+import { traceabilityCommand } from './commands/traceability.mjs';
+import { decisionCommand } from './commands/decision.mjs';
+import { designCommand } from './commands/design.mjs';
 
 const COMMANDS = {
   init: { run: initCommand, summary: 'Install AIDF into a project (alias of install).' },
@@ -42,6 +47,11 @@ const COMMANDS = {
   context: { run: contextCommand, summary: 'Assemble the minimum context for a task.' },
   speckit: { run: speckitCommand, summary: 'Inspect, initialise or sync GitHub Spec Kit.' },
   config: { run: configCommand, summary: 'Read or change project configuration.' },
+  artefacts: { run: artefactsCommand, summary: 'List, show, validate or verify structured artefacts.' },
+  requirements: { run: requirementsCommand, summary: 'Manage the requirements registry and coverage.' },
+  traceability: { run: traceabilityCommand, summary: 'Traceability report, chain verification and link checks.' },
+  decision: { run: decisionCommand, summary: 'Evaluate a technology decision (deterministic engine).' },
+  design: { run: designCommand, summary: 'Classify complexity and run the design workflow.' },
   version: { run: versionCommand, summary: 'Print the AIDF version.' },
   help: { run: helpCommand, summary: 'Show this help.' },
 };

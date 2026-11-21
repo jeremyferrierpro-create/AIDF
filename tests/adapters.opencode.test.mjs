@@ -11,6 +11,15 @@ import { FRAMEWORK_ROOT } from '../src/core/paths.mjs';
 import { loadSkillCatalog } from '../src/core/skills.mjs';
 import { exists } from '../src/util/fsx.mjs';
 
+import { execFile } from 'node:child_process';
+import { promisify } from 'node:util';
+
+const execFileAsync = promisify(execFile);
+
+async function gitInit(root) {
+  await execFileAsync('git', ['init', '-q', root]);
+}
+
 async function install(adapter) {
   const root = await fsp.mkdtemp(path.join(os.tmpdir(), 'aidf-opencode-'));
   const actions = await adapter.plan({ root, frameworkRoot: FRAMEWORK_ROOT, config: {}, withHooks: false });
@@ -41,10 +50,20 @@ test('opencode plan writes AGENTS.md and every built-in skill under .opencode/sk
 test('opencode verification is CONTRACT-PROVEN and never claims runtime discovery', async () => {
   const adapter = new OpenCodeAdapter();
   const { root } = await install(adapter);
+  await gitInit(root);
   const result = await adapter.verify({ root, frameworkRoot: FRAMEWORK_ROOT });
   assert.equal(result.status, 'CONTRACT-PROVEN');
   assert.equal(result.checks.find((c) => c.id === 'runtime-skill-discovery').status, 'NOT_PROVEN');
   assert.equal(result.checks.find((c) => c.id === 'skill-files').status, 'PASS');
+  assert.equal(result.checks.find((c) => c.id === 'git-worktree').status, 'PASS');
+});
+
+test('opencode verification is PARTIAL outside a git worktree', async () => {
+  const adapter = new OpenCodeAdapter();
+  const { root } = await install(adapter);
+  const result = await adapter.verify({ root, frameworkRoot: FRAMEWORK_ROOT });
+  assert.equal(result.status, 'PARTIAL');
+  assert.equal(result.checks.find((c) => c.id === 'git-worktree').status, 'PARTIAL');
 });
 
 test('opencode verification fails when skills are missing', async () => {

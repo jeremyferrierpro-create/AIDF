@@ -29,8 +29,24 @@ version is intentionally not bumped until L0 is accepted.
 - Design Engineering engine (complexity classifier, per-complexity workflows,
   SVG/HTML fallback mockups; Figma integration NOT_PROVEN).
 - Gap matrix: `docs/aidf/MATRICE-0.1.0-vers-0.2.0.md`.
+- CLI commands exposing the L1/L2/L3 engines: `aidf artefacts
+  list|show|validate|verify`, `aidf requirements
+  list|show|add|update|delete|coverage`, `aidf traceability
+  report|verify|missing|broken`, `aidf decision evaluate` (persists a DRAFT
+  artefact under `.aidf/artefacts/decisions/`, human approval required) and
+  `aidf design classify|run` (writes real SVG/CSS/Markdown fallback outputs).
+- OpenCode runtime verification (2026-11-21): a real `opencode run` session
+  quoted the AIDF instructions and listed the installed skills; `opencode
+  debug skill` discovers project skills only inside a git worktree, so
+  adapter verification now reports a `git-worktree` check (PARTIAL without
+  `.git`).
 
 ### Fixed (2026-11-21)
+- `getAllArtefactIds` imported `../util/fsx.mjs` from `core/artefacts/`,
+  silently resolving no artefact ids and marking every link unresolved.
+- `findMissingLinks` searched link *values* for type names instead of
+  resolving targets; it now matches resolved artefact types plus documented
+  ID prefixes (`REQ-`, `DES-`, `BACKEND-`, `TEST-`, `EVID-`).
 - `resources inspect` crashed on files larger than 2 GiB (whole-file
   `readFile`): hashing is now capped at 64 MiB with explicit `skipped`
   counters; secret-like paths are never opened.
@@ -40,7 +56,7 @@ version is intentionally not bumped until L0 is accepted.
   `--force-local` and relative paths fix pack/list/extract/pack-install.
 - Adapter registry test updated for the new `opencode` adapter.
 
-Test suite: 200/200 PASS (`node --test "tests/**/*.test.mjs"`).
+Test suite: 205/205 PASS (`node --test "tests/**/*.test.mjs"`).
 
 ### Fixed
 - npm packaging now ships `INSTALLATION.md`, `UTILISATION.md`, `QODER.md`,

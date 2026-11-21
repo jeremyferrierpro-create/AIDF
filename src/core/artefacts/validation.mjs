@@ -1,4 +1,4 @@
-import { readText, exists, sha256Text } from '../../util/fsx.mjs';
+import { readText, readJson, exists, sha256Text } from '../../util/fsx.mjs';
 import { FRAMEWORK_ROOT } from '../paths.mjs';
 import { parseYaml } from '../../util/yaml.mjs';
 
@@ -133,7 +133,6 @@ export async function getAllArtefactIds(root) {
     for (const entry of entries) {
       if (entry.isFile() && entry.name.endsWith('.json') && entry.name !== 'index.json') {
         try {
-          const { readJson } = await import('../util/fsx.mjs');
           const body = await readJson(`${artefactsDir}/${entry.name}`, null);
           if (body && body.id) {
             ids.add(body.id);

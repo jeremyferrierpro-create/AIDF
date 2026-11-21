@@ -261,23 +261,44 @@ export async function findBrokenLinks(root, options = {}) {
 /**
  * Find artefacts without a specific type of link.
  */
+const TYPE_ID_PREFIX = {
+  requirement: 'REQ-',
+  design: 'DES-',
+  implementation: 'BACKEND-',
+  test: 'TEST-',
+  evidence: 'EVID-',
+};
+
+function artefactMatchesType(artefact, type) {
+  if (!artefact) return false;
+  if (artefact.type === type) return true;
+  const prefix = TYPE_ID_PREFIX[type];
+  return Boolean(prefix && typeof artefact.id === 'string' && artefact.id.startsWith(prefix));
+}
+
 export async function findMissingLinks(root, options = {}) {
   const artefacts = await loadAllArtefacts(root);
   const missing = [];
-  
+
   const targetType = options.type;
   if (!targetType) {
     throw new Error('Missing --type option (requirement, design, implementation, test, evidence)');
   }
-  
+
   for (const [id, artefact] of artefacts) {
     const links = artefact.links || {};
-    const hasLink = links.implements?.includes(targetType) ||
-                    links.designedBy?.includes(targetType) ||
-                    links.implementedBy?.includes(targetType) ||
-                    links.verifiedBy?.includes(targetType) ||
-                    links.evidencedBy?.includes(targetType);
-    
+    let hasLink = false;
+    for (const targetIds of Object.values(links)) {
+      if (!Array.isArray(targetIds)) continue;
+      for (const targetId of targetIds) {
+        if (artefactMatchesType(artefacts.get(targetId), targetType)) {
+          hasLink = true;
+          break;
+        }
+      }
+      if (hasLink) break;
+    }
+
     if (!hasLink) {
       missing.push({
         id,
@@ -286,7 +307,7 @@ export async function findMissingLinks(root, options = {}) {
       });
     }
   }
-  
+
   return missing;
 }
 
