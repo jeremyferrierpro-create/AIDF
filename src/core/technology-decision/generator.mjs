@@ -19,7 +19,8 @@ export function generateDecisionDocument(context, analysis, recommendation) {
     context,
     analysis: {
       deterministic: analysis.deterministic,
-      llm: analysis.llm
+      llm: analysis.llm ?? null,
+      delegation: analysis.delegation ?? null
     },
     options: {
       shortlisted: [],

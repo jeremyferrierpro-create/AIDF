@@ -70,7 +70,7 @@ Régressions WIP corrigées le 2026-11-21:
 |---|---|---|
 | Moteur déterministe (contraintes dures/mous, ranking) | PROVEN | `src/core/technology-decision/*` + tests |
 | Génération document de décision (JSON/MD) | PROVEN | `generator.mjs` + tests |
-| Analyse LLM | NOT_PROVEN | `AI_MODEL` non configuré; chemins LLM échouent explicitement (comportement honnête) |
+| Interprétation LLM | HORS PÉRIMÈTRE 0.2.0 | Par design : AIDF est un framework de gouvernance, pas une application — il ne possède ni ne configure de modèle. Le moteur émet les faits déterministes (contraintes, scores, éliminations, incertitudes) ; l'interprétation des compromis/risques/architecture est **déléguée à l'agent IA qui invoque la commande** (`analysis.delegation.delegatedTo = "invoking-agent"`). L'ancien `analyzer-llm.mjs` (`AI_MODEL`/`callLLM`) a été retiré : chemin mort sans valeur pour un framework. |
 | Exposition CLI (`aidf decision evaluate`) | PROVEN | commande + artefact `decisions/*.json` + export MD |
 | ADR persistés dans `.aidf/artefacts/decisions/` | PROVEN | enveloppe artefact validée, statut DRAFT, approbation humaine requise |
 
@@ -146,6 +146,6 @@ Régressions WIP corrigées le 2026-11-21:
 | D1 | Licence `dictionary-of-ai-coding` | RÉSOLU 2026-11-21 — MIT déclarée par le propriétaire (fichier LICENSE absent du clone, déclaration enregistrée dans sources.yaml) |
 | D2 | Commit du WIP + corrections baseline | En attente d'autorisation |
 | D3 | Vérification runtime IDE | OpenCode PROVEN (session réelle) ; Qoder reste CONTRACT-PROVEN |
-| D4 | `AI_MODEL` pour le Decision Engine LLM | NOT_PROVEN tant que non configuré — le déterministe reste le chemin prouvé |
+| D4 | `AI_MODEL` pour le Decision Engine LLM | RÉSOLU 2026-11-21 — hors périmètre par décision : interprétation déléguée à l'agent hôte, `analyzer-llm.mjs` supprimé |
 | D5 | Commandes CLI manquantes | FAIT pour artefacts/requirements/traceability/decision/design/security/tests/release ; `docs generate` implémenté en PARTIAL (vues Markdown des artefacts, pas la dérivation ADR-004) |
 | D6 | Publication npm / push git | Non autorisé |

@@ -8,13 +8,8 @@ export {
   detectIncompatibilities,
   rankOptions
 } from './analyzer-deterministic.mjs';
-export {
-  analyzeTradeoffs,
-  assessRisks,
-  compareArchitectures,
-  documentUncertainties,
-  generateExplanation
-} from './analyzer-llm.mjs';
+// Interpretation of trade-offs, risks and uncertainties is delegated to the
+// invoking AI agent by design; AIDF owns no model (see engine delegation).
 export {
   generateDecisionDocument,
   exportToJSON,

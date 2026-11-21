@@ -177,7 +177,8 @@ test('microservices decision', async () => {
   
   // Should document scalability considerations
   assert.ok(result.analysis);
-  assert.ok(result.analysis.llm);
+  assert.equal(result.analysis.llm, null);
+  assert.equal(result.analysis.delegation?.delegatedTo, 'invoking-agent');
 });
 
 test('decision document structure validation', async () => {
@@ -209,7 +210,8 @@ test('decision document structure validation', async () => {
   assert.ok(result.context, 'Missing context section');
   assert.ok(result.analysis, 'Missing analysis section');
   assert.ok(result.analysis.deterministic, 'Missing deterministic analysis');
-  assert.ok(result.analysis.llm, 'Missing LLM analysis');
+  assert.equal(result.analysis.llm, null);
+  assert.equal(result.analysis.delegation?.delegatedTo, 'invoking-agent', 'Interpretation must be delegated to the invoking agent');
   assert.ok(result.options, 'Missing options section');
   assert.ok(result.comparison, 'Missing comparison section');
   assert.ok(result.recommendation, 'Missing recommendation section');

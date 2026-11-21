@@ -1,5 +1,4 @@
 import { validateHardConstraints, calculateSoftConstraints, detectIncompatibilities, rankOptions } from './analyzer-deterministic.mjs';
-import { analyzeTradeoffs, assessRisks, documentUncertainties, generateExplanation } from './analyzer-llm.mjs';
 import { generateDecisionDocument, exportToJSON, exportToMarkdown } from './generator.mjs';
 
 /**
@@ -37,11 +36,13 @@ export async function evaluateTechnologyDecision(projectContext, options = {}) {
   // Step 4: Rank options
   const ranked = rankOptions(validOptions, scores, incompatibilities);
   
-  // Step 5: Get LLM analysis (only for shortlisted options)
-  const llmAnalysis = await getLLMAnalysis(context, ranked);
-  
+  // Step 5: AIDF provides deterministic facts only. Interpretation of
+  // trade-offs, risks and uncertainties is delegated to the AI agent that
+  // invokes the command; no AIDF-owned model exists or is required.
+  const agentAnalysis = buildAgentDelegation(ranked);
+
   // Step 6: Generate recommendation
-  const recommendation = generateRecommendation(ranked, llmAnalysis);
+  const recommendation = generateRecommendation(ranked, agentAnalysis);
   
   // Step 7: Generate document
   const document = generateDecisionDocument(context, {
@@ -56,56 +57,40 @@ export async function evaluateTechnologyDecision(projectContext, options = {}) {
       scores,
       incompatibilities
     },
-    llm: llmAnalysis
+    llm: null,
+    delegation: agentAnalysis.delegation
   }, recommendation);
   
   return document;
 }
 
 /**
- * Get LLM analysis for shortlisted options.
+ * Build the delegation record for interpretive analysis.
+ * AIDF is a governance framework, not an application: it owns no model.
+ * The invoking AI agent performs trade-off, risk and architecture
+ * interpretation on top of the deterministic facts emitted here.
  */
-async function getLLMAnalysis(context, ranked) {
-  const analysis = {
+function buildAgentDelegation(ranked) {
+  const shortlisted = ranked.shortlisted ?? [];
+  const uncertainties = shortlisted.slice(0, 3).map((s) => ({
+    component: s.option,
+    unknowns: [
+      'trade-off interpretation',
+      'risk assessment',
+      'architecture fit',
+      'option data completeness',
+    ],
+  }));
+  return {
     tradeoffs: [],
     risks: [],
-    uncertainties: [],
-    architecture: []
+    uncertainties,
+    architecture: [],
+    delegation: {
+      delegatedTo: 'invoking-agent',
+      note: 'AIDF provides deterministic facts only (constraints, scores, eliminations). Trade-off, risk and uncertainty interpretation is performed by the AI agent invoking the command; AIDF configures no model and requires no credentials.',
+    },
   };
-  
-  // Only analyze if we have shortlisted options
-  if (ranked.shortlisted && ranked.shortlisted.length > 0) {
-    // Get top 3 shortlisted options for analysis
-    const topOptions = ranked.shortlisted.slice(0, 3).map(s => 
-      ranked.shortlisted.find(o => o.option === s.option) || { id: s.option }
-    );
-    
-    // Analyze trade-offs between top options
-    if (topOptions.length >= 2) {
-      analysis.tradeoffs = await analyzeTradeoffs(context, topOptions);
-    }
-    
-    // Assess risks for recommended stack
-    const stack = ranked.shortlisted.slice(0, 2).map(s => ({
-      component: 'primary',
-      option: s.option
-    }));
-    analysis.risks = await assessRisks(context, stack);
-    
-    // Document uncertainties
-    const uncertaintiesResult = await documentUncertainties(context, stack);
-    analysis.uncertainties = uncertaintiesResult.uncertainties;
-    
-    // Get architecture comparison if multiple approaches exist
-    if (ranked.shortlisted.length >= 2) {
-      analysis.architecture = await compareArchitectures(
-        context,
-        ranked.shortlisted.map(s => ({ name: s.option, complexity: 'medium' }))
-      );
-    }
-  }
-  
-  return analysis;
 }
 
 /**
@@ -169,9 +154,4 @@ function generateRecommendation(ranked, llmAnalysis) {
   };
 }
 
-/**
- * Compare architectures (placeholder for LLM analysis).
- */
-async function compareArchitectures(context, architectures) {
-  return [];
-}
+

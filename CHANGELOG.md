@@ -25,7 +25,8 @@ version is intentionally not bumped until L0 is accepted.
 - Artefact schemas and validation (`src/core/artefacts`, `assets/schemas/`),
   requirements registry and traceability chain (L1-B/L1-C partial).
 - Technology Decision Engine (deterministic analyzer + decision document
-  generator; LLM analyzer present but NOT_PROVEN without `AI_MODEL`).
+  generator; interpretation of trade-offs/risks is delegated to the
+  invoking AI agent by design — `analysis.delegation`, no AIDF-owned model).
 - Design Engineering engine (complexity classifier, per-complexity workflows,
   SVG/HTML fallback mockups; Figma integration NOT_PROVEN).
 - Gap matrix: `docs/aidf/MATRICE-0.1.0-vers-0.2.0.md`.
@@ -56,6 +57,14 @@ version is intentionally not bumped until L0 is accepted.
   debug skill` discovers project skills only inside a git worktree, so
   adapter verification now reports a `git-worktree` check (PARTIAL without
   `.git`).
+
+### Removed
+- `src/core/technology-decision/analyzer-llm.mjs` and the `AI_MODEL` /
+  `callLLM` path: AIDF is a governance framework and owns no model. The
+  decision document now records `analysis.delegation`
+  (`delegatedTo: "invoking-agent"`) so interpretation stays with the AI
+  agent that runs the command. Deterministic analysis is unchanged and
+  remains the only proven path.
 
 ### Fixed (2026-11-21)
 - `getAllArtefactIds` imported `../util/fsx.mjs` from `core/artefacts/`,
