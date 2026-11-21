@@ -16,6 +16,7 @@ Status: VALIDATED for the cells marked; others are declared, not exercised.
 | Adapter | Status | Project scope | Notes |
 |---|---|---|---|
 | qoder | CONTRACT-PROVEN (install + verifier); runtime activation requires manual UI steps | `.qoder/rules`, `.qoder/skills`, `.qoder/agents`, `.qoder/settings.json`, `AGENTS.md` | validated against Qoder 1.106.3 layout + official docs |
+| opencode | PROVEN runtime (2026-11-21): real `opencode run` session read the AIDF block and discovered project skills; requires a git worktree for project-skill discovery | `AGENTS.md`, `.opencode/skills/` | verified on OpenCode 1.18.34; non-git projects get files but no skill discovery (PARTIAL) |
 | generic | PROVEN (AGENTS.md managed block only) | `AGENTS.md` | any AGENTS.md-compatible host |
 
 ## 3. GitHub Spec Kit
@@ -42,7 +43,8 @@ Status: VALIDATED for the cells marked; others are declared, not exercised.
 
 | Item | Status | Reason |
 |---|---|---|
-| `dictionary-of-ai-coding` redistribution | BLOCKED | no LICENSE file in clone; index-only |
+| `dictionary-of-ai-coding` licence | RESOLVED 2026-11-21 | MIT declared by the owner (no LICENSE file in the clone); registry updated, skills indexable |
+| `pencil` redistribution | BLOCKED | GPL-2.0 licence; excluded from the MIT AIDF distribution by human decision |
 | `.qoder/commands` (legacy) | NOT_APPLICABLE | dropped by Qoder IDE 1.24+; AIDF uses skills |
 | npm global install of AIDF | declared, not exercised in 0.1.0 | package ships `bin` but the recommended flow is the portable checkout |
 | Qoder marketplace plugin packaging | NOT_APPLICABLE | out of scope for 0.1.0 |
@@ -75,4 +77,14 @@ Status: VALIDATED for the cells marked; others are declared, not exercised.
   `approval.authenticated: false`.
 - **Frozen documents**: install/update still never rewrite project documents,
   registries, workflows or knowledge, even with `--force` (regression-tested).
-- **CLI**: 18 verbs, exit codes 0/1/2, `--json` shape additive only.
+- **CLI**: 26 verbs, exit codes 0/1/2, `--json` shape additive only.
+- **New commands (0.2.0)**: `artefacts`, `requirements`, `traceability`,
+  `decision`, `design`, `security`, `tests`, `release`, plus
+  `resources inventory|coverage|reconcile` and `skills sources|catalog|enable`.
+  All are additive; no 0.1.0 verb changed semantics.
+- **Decision Engine**: the optional LLM analyzer (`AI_MODEL`/`callLLM`) was
+  removed. AIDF owns no model; interpretation is delegated to the invoking
+  agent (`analysis.delegation`). The deterministic path is unchanged.
+- **Migration**: covered by `tests/migration.test.mjs` (legacy 0.1.0 fixture
+  upgrades additively, files preserved, engines usable) and verified manually
+  against a real 0.1.0 install copy (148 → 198 managed files, 0 conflicts).

@@ -52,6 +52,10 @@ version is intentionally not bumped until L0 is accepted.
 - Artefact discovery now recurses into subdirectories (`decisions/`,
   `security/`), so nested artefacts appear in `artefacts list`, link
   resolution and traceability; `createLink` writes back to the real path.
+- Migration 0.1.0 → 0.2.0 verified two ways: `tests/migration.test.mjs`
+  (legacy fixture upgrades additively, project files preserved, engines
+  usable) and a manual run against a real 0.1.0 install copy
+  (148 → 198 managed files, 0 conflicts, `doctor` adapter/skills PASS).
 - OpenCode runtime verification (2026-11-21): a real `opencode run` session
   quoted the AIDF instructions and listed the installed skills; `opencode
   debug skill` discovers project skills only inside a git worktree, so
