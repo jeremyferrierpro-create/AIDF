@@ -171,7 +171,7 @@ export async function generateThreatModel(root, options = {}) {
       type: 'generated',
       author: 'aidf',
       createdAt: now,
-      generator: 'security-threat-model@0.2.0',
+      generator: 'security-threat-model@0.3.0',
     },
     links: {
       references: requirementIds,

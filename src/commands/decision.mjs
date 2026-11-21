@@ -34,7 +34,7 @@ function toArtefact(document, root) {
       type: 'generated',
       author: 'aidf',
       createdAt: now,
-      generator: 'technology-decision@0.2.0',
+      generator: 'technology-decision@0.3.0',
     },
     links: {},
     document,
