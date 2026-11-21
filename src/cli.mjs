@@ -29,6 +29,9 @@ import { requirementsCommand } from './commands/requirements.mjs';
 import { traceabilityCommand } from './commands/traceability.mjs';
 import { decisionCommand } from './commands/decision.mjs';
 import { designCommand } from './commands/design.mjs';
+import { securityCommand } from './commands/security.mjs';
+import { testsCommand } from './commands/tests.mjs';
+import { releaseCommand } from './commands/release.mjs';
 
 const COMMANDS = {
   init: { run: initCommand, summary: 'Install AIDF into a project (alias of install).' },
@@ -52,6 +55,9 @@ const COMMANDS = {
   traceability: { run: traceabilityCommand, summary: 'Traceability report, chain verification and link checks.' },
   decision: { run: decisionCommand, summary: 'Evaluate a technology decision (deterministic engine).' },
   design: { run: designCommand, summary: 'Classify complexity and run the design workflow.' },
+  security: { run: securityCommand, summary: 'Generate and inspect the STRIDE threat model artefact.' },
+  tests: { run: testsCommand, summary: 'Generate a test plan artefact and report requirement coverage.' },
+  release: { run: releaseCommand, summary: 'Build a release readiness report from gates, docs and evidence.' },
   version: { run: versionCommand, summary: 'Print the AIDF version.' },
   help: { run: helpCommand, summary: 'Show this help.' },
 };

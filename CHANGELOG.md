@@ -35,6 +35,22 @@ version is intentionally not bumped until L0 is accepted.
   report|verify|missing|broken`, `aidf decision evaluate` (persists a DRAFT
   artefact under `.aidf/artefacts/decisions/`, human approval required) and
   `aidf design classify|run` (writes real SVG/CSS/Markdown fallback outputs).
+- `aidf security analyze|show`: deterministic STRIDE threat model generated
+  from project detection (assets, trust boundaries, threats grounded in
+  detected surface), persisted as `TM-###` under
+  `.aidf/artefacts/security/` with a Markdown report option.
+- `aidf tests plan|coverage`: generates a `TP-###` test-plan artefact (one
+  planned case per acceptance criterion, type inferred from wording) and
+  reports requirement coverage across planned cases and `TEST-*` artefacts.
+- `aidf docs generate [--check]`: renders canonical artefacts to Markdown
+  under `.aidf/docs/generated/` with provenance headers and manual-edit
+  divergence detection.
+- `aidf release report [--record] [--strict]`: read-only release readiness
+  report aggregating gate evaluations, document statuses, CHANGELOG,
+  evidence and artefacts; writes `.aidf/reports/RELEASE-<date>.{json,md}`.
+- Artefact discovery now recurses into subdirectories (`decisions/`,
+  `security/`), so nested artefacts appear in `artefacts list`, link
+  resolution and traceability; `createLink` writes back to the real path.
 - OpenCode runtime verification (2026-11-21): a real `opencode run` session
   quoted the AIDF instructions and listed the installed skills; `opencode
   debug skill` discovers project skills only inside a git worktree, so
@@ -56,7 +72,7 @@ version is intentionally not bumped until L0 is accepted.
   `--force-local` and relative paths fix pack/list/extract/pack-install.
 - Adapter registry test updated for the new `opencode` adapter.
 
-Test suite: 205/205 PASS (`node --test "tests/**/*.test.mjs"`).
+Test suite: 211/211 PASS (`node --test "tests/**/*.test.mjs"`).
 
 ### Fixed
 - npm packaging now ships `INSTALLATION.md`, `UTILISATION.md`, `QODER.md`,

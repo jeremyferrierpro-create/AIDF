@@ -12,31 +12,57 @@ export const TRACEABILITY_TYPES = {
 };
 
 /**
+ * Recursively collect artefact JSON files under the artefacts directory.
+ * Returns [{ id, path, body }] for every parseable file exposing an `id`.
+ */
+export async function collectArtefactFiles(root) {
+  const found = [];
+  const artefactsDir = aidfPaths(root).artefacts.dir;
+  if (!await exists(artefactsDir)) {
+    return found;
+  }
+
+  async function walk(dir) {
+    const entries = await readDirSafe(dir);
+    for (const entry of entries) {
+      const full = `${dir}/${entry.name}`;
+      if (entry.isDirectory()) {
+        await walk(full);
+      } else if (entry.isFile() && entry.name.endsWith('.json') && entry.name !== 'index.json') {
+        try {
+          const body = await readJson(full, null);
+          if (body && body.id) {
+            found.push({ id: body.id, path: full, body });
+          }
+        } catch {
+          // Skip malformed files
+        }
+      }
+    }
+  }
+
+  await walk(artefactsDir);
+  return found;
+}
+
+/**
  * Load all artefacts from the artefacts directory.
  */
 export async function loadAllArtefacts(root) {
   const artefacts = new Map();
-  
-  const artefactsDir = aidfPaths(root).artefacts.dir;
-  if (!await exists(artefactsDir)) {
-    return artefacts;
+  for (const { id, body } of await collectArtefactFiles(root)) {
+    artefacts.set(id, body);
   }
-  
-  const entries = await readDirSafe(artefactsDir);
-  for (const entry of entries) {
-    if (entry.isFile() && entry.name.endsWith('.json') && entry.name !== 'index.json') {
-      try {
-        const body = await readJson(`${artefactsDir}/${entry.name}`, null);
-        if (body && body.id) {
-          artefacts.set(body.id, body);
-        }
-      } catch {
-        // Skip malformed files
-      }
-    }
-  }
-  
   return artefacts;
+}
+
+/**
+ * Resolve the on-disk path of an artefact by ID.
+ */
+export async function artefactFilePath(root, artefactId) {
+  const files = await collectArtefactFiles(root);
+  const hit = files.find((f) => f.id === artefactId);
+  return hit ? hit.path : null;
 }
 
 /**
@@ -101,10 +127,12 @@ export async function createLink(root, sourceId, targetType, targetId, options =
   }
   
   // Update both artefacts
-  const artefactsDir = aidfPaths(root).artefacts.dir;
-  const sourcePath = `${artefactsDir}/${sourceId}.json`;
-  const targetPath = `${artefactsDir}/${targetId}.json`;
-  
+  const sourcePath = await artefactFilePath(root, sourceId);
+  const targetPath = await artefactFilePath(root, targetId);
+  if (!sourcePath || !targetPath) {
+    throw new Error('Artefact file path could not be resolved.');
+  }
+
   await writeJson(sourcePath, source);
   await writeJson(targetPath, target);
   

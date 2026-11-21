@@ -129,18 +129,10 @@ export async function getAllArtefactIds(root) {
   }
   
   try {
-    const entries = await readDirSafe(artefactsDir);
-    for (const entry of entries) {
-      if (entry.isFile() && entry.name.endsWith('.json') && entry.name !== 'index.json') {
-        try {
-          const body = await readJson(`${artefactsDir}/${entry.name}`, null);
-          if (body && body.id) {
-            ids.add(body.id);
-          }
-        } catch {
-          // Skip malformed files
-        }
-      }
+    const { collectArtefactFiles } = await import('../traceability/chain.mjs');
+    const files = await collectArtefactFiles(root);
+    for (const { id } of files) {
+      ids.add(id);
     }
   } catch {
     // Directory doesn't exist or can't be read

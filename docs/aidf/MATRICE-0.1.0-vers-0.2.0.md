@@ -14,7 +14,7 @@ runtime non prouvé), PARTIAL, NOT_PROVEN, BLOCKED, ABSENT.
 
 | Domaine | État | Preuve |
 |---|---|---|
-| 23 verbes CLI | PROVEN | `src/cli.mjs` COMMANDS; e2e `tests/cli.test.mjs` + `tests/cli.engines.test.mjs` |
+| 26 verbes CLI | PROVEN | `src/cli.mjs` COMMANDS; e2e `tests/cli.test.mjs` + `tests/cli.engines.test.mjs` + `tests/cli.security.test.mjs` + `tests/cli.delivery.test.mjs` |
 | Phases/gates/checks | PROVEN | `assets/workflows/`, `src/core/workflow.mjs`, gates tests |
 | Evidence Engine + `verifyEvidenceChain` | PROVEN | `src/core/evidence.mjs`, `evidence verify` |
 | Packaging npm | PROVEN | `tests/packaging.test.mjs` (pack → install → init → doctor) |
@@ -91,8 +91,8 @@ Régressions WIP corrigées le 2026-11-21:
 |---|---|---|
 | Compétence `aidf-security-review` + skill `owasp-security` (source) | AVAILABLE | registry + catalogue |
 | Gates security workflow | PROVEN | `assets/workflows/`, validate tests |
-| Modèle de menace STRIDE (`security/threat-model.json`) | PARTIAL | schéma présent; pas de commande de génération |
-| Cycle TDD outillé (RED→GREEN→refactor) | ABSENT | skill `testing-validation` conseillée; pas de moteur TDD dédié |
+| Modèle de menace STRIDE (`security/threat-model.json`) | PROVEN | `aidf security analyze|show` — génération déterministe depuis `detectProject` + config, artefact `TM-###` DRAFT persisté sous `.aidf/artefacts/security/` ; revue humaine requise avant VALIDATED |
+| Cycle TDD outillé (RED→GREEN→refactor) | PARTIAL | `aidf tests plan` génère un artefact `TP-###` (1 cas planifié par critère d'acceptation, types inférés) et `aidf tests coverage` mesure la couverture exigence→test ; l'exécution RED→GREEN reste la responsabilité du projet (pas de moteur de scaffold de tests) |
 | Tests E2E framework | ABSENT | dépend du projet cible |
 
 ## 8. Artefacts & traçabilité (L1)
@@ -105,8 +105,8 @@ Régressions WIP corrigées le 2026-11-21:
 | Contrat de liens L1-C complet | PARTIAL | test `traceability.link.test.mjs` retiré au commit 27a9581; commandes `traceability` exposées mais la sémantique complète des liens reste à consolider |
 | Commandes CLI artefacts/requirements/traceability | PROVEN | `aidf artefacts|requirements|traceability` implémentées + `tests/cli.engines.test.mjs` (5 tests e2e) |
 | Commandes CLI decision/design | PROVEN | `aidf decision evaluate` (artefact DRAFT + approbation humaine requise) et `aidf design classify|run` (outputs SVG/CSS/MD réels) |
-| `docs generate/regenerate/reconcile` (L1-D) | ABSENT | non implémenté |
-| Couverture déterministe exigence→test→preuve | PARTIAL | `requirements coverage` exposée (basée sur l'Evidence Engine); non encore reliée aux artefacts de test |
+| `docs generate/regenerate/reconcile` (L1-D) | PARTIAL | `aidf docs generate [--check]` rend les artefacts canoniques en Markdown sous `.aidf/docs/generated/` avec en-tête de provenance (source + sha256) et détection de divergence (édition manuelle signalée, régénération écrasante) ; la dérivation JSON←Markdown d'ADR-004 (documents canoniques existants) reste non implémentée |
+| Couverture déterministe exigence→test→preuve | PARTIAL | `aidf tests coverage` relie exigences ↔ cas planifiés (TP) ↔ artefacts `TEST-*` ; `requirements coverage` (Evidence Engine) expose toujours la couverture par preuves PASS |
 
 ## 9. Delivery & Operations (LOT 8)
 
@@ -114,6 +114,7 @@ Régressions WIP corrigées le 2026-11-21:
 |---|---|
 | Skill `aidf-devops-engineering` | AVAILABLE |
 | Phase `release` + gates | PROVEN (workflow) |
+| Rapport de release (`aidf release report`) | PROVEN | évalue tous les gates en lecture seule (pas d'enregistrement), agrège statuts docs/CHANGELOG/evidence/artefacts, écrit `.aidf/reports/RELEASE-<date>.{json,md}`, verdict READY/NOT_READY, `--strict` pour CI, `--record` pour evidence `release-report` |
 | Moteur build/deploy/rollback/monitoring | ABSENT (conseillé par skills/gates, pas d'outil) |
 
 ## 10. Gouvernance obligatoire
@@ -146,5 +147,5 @@ Régressions WIP corrigées le 2026-11-21:
 | D2 | Commit du WIP + corrections baseline | En attente d'autorisation |
 | D3 | Vérification runtime IDE | OpenCode PROVEN (session réelle) ; Qoder reste CONTRACT-PROVEN |
 | D4 | `AI_MODEL` pour le Decision Engine LLM | NOT_PROVEN tant que non configuré — le déterministe reste le chemin prouvé |
-| D5 | Commandes CLI manquantes | FAIT pour artefacts/requirements/traceability/decision/design ; reste `docs generate` (L1-D) |
+| D5 | Commandes CLI manquantes | FAIT pour artefacts/requirements/traceability/decision/design/security/tests/release ; `docs generate` implémenté en PARTIAL (vues Markdown des artefacts, pas la dérivation ADR-004) |
 | D6 | Publication npm / push git | Non autorisé |
