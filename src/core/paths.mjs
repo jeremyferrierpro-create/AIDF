@@ -35,6 +35,7 @@ export const PHASES = [
 
 export function aidfPaths(root) {
   const base = path.join(root, AIDF_DIR);
+  const artefactsDir = path.join(base, 'artefacts');
   return {
     root,
     base,
@@ -57,15 +58,17 @@ export function aidfPaths(root) {
     context: path.join(base, 'state', 'context'),
     reports: path.join(base, 'reports'),
     // L1 artefacts
-    artefacts: path.join(base, 'artefacts'),
-    artefactsRequirements: path.join(base, 'artefacts', 'requirements.json'),
-    artefactsDiscovery: path.join(base, 'artefacts', 'discovery.json'),
-    artefactsConstraints: path.join(base, 'artefacts', 'constraints.json'),
-    artefactsArchitecture: path.join(base, 'artefacts', 'architecture.json'),
-    artefactsTestPlan: path.join(base, 'artefacts', 'test-plan.json'),
-    artefactsDecisions: path.join(base, 'artefacts', 'decisions'),
-    artefactsSecurity: path.join(base, 'artefacts', 'security'),
-    artefactsSecurityThreatModel: path.join(base, 'artefacts', 'security', 'threat-model.json'),
+    artefacts: {
+      dir: artefactsDir,
+      requirements: path.join(artefactsDir, 'requirements.json'),
+      discovery: path.join(artefactsDir, 'discovery.json'),
+      constraints: path.join(artefactsDir, 'constraints.json'),
+      architecture: path.join(artefactsDir, 'architecture.json'),
+      testPlan: path.join(artefactsDir, 'test-plan.json'),
+      decisions: path.join(artefactsDir, 'decisions'),
+      security: path.join(artefactsDir, 'security'),
+      'security/threat-model': path.join(artefactsDir, 'security', 'threat-model.json'),
+    },
   };
 }
 

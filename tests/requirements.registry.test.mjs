@@ -76,27 +76,33 @@ test('addRequirement rejects duplicate ID', async () => {
     description: 'Description 1.'
   });
   
-  assert.throws(async () => {
-    await addRequirement(root, {
-      id: 'REQ-F-001',
-      type: 'FUNCTIONAL',
-      title: 'Second',
-      description: 'Description 2.'
-    });
-  }, /already exists/);
+  assert.rejects(
+    async () => {
+      await addRequirement(root, {
+        id: 'REQ-F-001',
+        type: 'FUNCTIONAL',
+        title: 'Second',
+        description: 'Description 2.'
+      });
+    },
+    /already exists/
+  );
 });
 
 test('addRequirement validates ID format', async () => {
   const root = await tempProject();
   
-  assert.throws(async () => {
-    await addRequirement(root, {
-      id: 'INVALID-ID',
-      type: 'FUNCTIONAL',
-      title: 'Invalid',
-      description: 'Description.'
-    });
-  }, /Invalid requirement ID format/);
+  assert.rejects(
+    async () => {
+      await addRequirement(root, {
+        id: 'INVALID-ID',
+        type: 'FUNCTIONAL',
+        title: 'Invalid',
+        description: 'Description.'
+      });
+    },
+    /Invalid requirement ID format/
+  );
 });
 
 test('updateRequirement modifies existing requirement', async () => {
@@ -123,9 +129,12 @@ test('updateRequirement modifies existing requirement', async () => {
 test('updateRequirement rejects non-existent ID', async () => {
   const root = await tempProject();
   
-  assert.throws(async () => {
-    await updateRequirement(root, 'REQ-F-999', { title: 'Update' });
-  }, /not found/);
+  assert.rejects(
+    async () => {
+      await updateRequirement(root, 'REQ-F-999', { title: 'Update' });
+    },
+    /not found/
+  );
 });
 
 test('deleteRequirement marks requirement as BLOCKED', async () => {
@@ -148,9 +157,12 @@ test('deleteRequirement marks requirement as BLOCKED', async () => {
 test('deleteRequirement rejects non-existent ID', async () => {
   const root = await tempProject();
   
-  assert.throws(async () => {
-    await deleteRequirement(root, 'REQ-F-999');
-  }, /not found/);
+  assert.rejects(
+    async () => {
+      await deleteRequirement(root, 'REQ-F-999');
+    },
+    /not found/
+  );
 });
 
 test('filterRequirements filters by type', async () => {

@@ -1,5 +1,5 @@
 import { aidfPaths, AIDF_VERSION } from '../paths.mjs';
-import { readJson, writeJson, exists, sha256Text } from '../util/fsx.mjs';
+import { readJson, writeJson, exists, sha256Text } from '../../util/fsx.mjs';
 
 export const REQUIREMENT_STATUSES = ['DRAFT', 'VALIDATED', 'BLOCKED', 'OUTDATED'];
 export const REQUIREMENT_TYPES = ['FUNCTIONAL', 'NON_FUNCTIONAL'];
@@ -20,7 +20,7 @@ export function generateRequirementId(type, index) {
  * Load the requirements registry.
  */
 export async function loadRequirementsRegistry(root) {
-  const { readJson } = await import('../util/fsx.mjs');
+  const { readJson } = await import('../../util/fsx.mjs');
   const file = aidfPaths(root).artefacts.requirements;
   
   const data = await readJson(file, null);
@@ -39,7 +39,7 @@ export async function loadRequirementsRegistry(root) {
  * Save the requirements registry.
  */
 export async function saveRequirementsRegistry(root, registry) {
-  const { writeJson } = await import('../util/fsx.mjs');
+  const { writeJson } = await import('../../util/fsx.mjs');
   const file = aidfPaths(root).artefacts.requirements;
   registry.updatedAt = new Date().toISOString();
   await writeJson(file, registry);

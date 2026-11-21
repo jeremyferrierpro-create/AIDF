@@ -1,8 +1,12 @@
 export { 
   loadAllArtefacts, 
+  loadArtefact, 
   resolveLink, 
+  createLink,
   verifyChain, 
   findBrokenLinks, 
   findMissingLinks,
-  LINK_TYPES 
+  generateTraceabilityReport,
+  LINK_TYPES,
+  TRACEABILITY_TYPES
 } from './chain.mjs';

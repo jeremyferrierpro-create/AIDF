@@ -1,9 +1,9 @@
-import { readText, exists, sha256Text } from '../util/fsx.mjs';
+import { readText, exists, sha256Text } from '../../util/fsx.mjs';
 import { FRAMEWORK_ROOT } from '../paths.mjs';
-import { parseYaml } from '../util/yaml.mjs';
+import { parseYaml } from '../../util/yaml.mjs';
 
 export const ARTIFACT_STATUSES = ['DRAFT', 'VALIDATED', 'BLOCKED', 'OUTDATED'];
-export const ENVELOPE_REQUIRED = ['id', 'schemaVersion', 'createdAt', 'updatedAt', 'status', 'source', 'links', 'validation'];
+export const ENVELOPE_REQUIRED = ['id', 'schemaVersion', 'createdAt', 'updatedAt', 'status', 'source', 'links'];
 
 /**
  * Validate an artefact JSON against its schema.
@@ -121,9 +121,9 @@ export async function resolveLinks(root, links, options = {}) {
 export async function getAllArtefactIds(root) {
   const ids = new Set();
   const { aidfPaths } = await import('../paths.mjs');
-  const { readDirSafe } = await import('../util/fsx.mjs');
+  const { readDirSafe } = await import('../../util/fsx.mjs');
   
-  const artefactsDir = aidfPaths(root).artefacts;
+  const artefactsDir = aidfPaths(root).artefacts.dir;
   if (!await exists(artefactsDir)) {
     return ids;
   }

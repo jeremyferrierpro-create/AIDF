@@ -4,6 +4,7 @@ import path from 'node:path';
 import fsp from 'node:fs/promises';
 import os from 'node:os';
 import { loadAllArtefacts, resolveLink, verifyChain, findBrokenLinks, findMissingLinks, LINK_TYPES } from '../src/core/traceability/chain.mjs';
+import { aidfPaths } from '../src/core/paths.mjs';
 
 async function tempProject() {
   const root = await fsp.mkdtemp(path.join(os.tmpdir(), 'aidf-traceability-'));
@@ -70,7 +71,7 @@ test('loadAllArtefacts loads artefacts from directory', async () => {
     }
   };
   
-  const artefactsDir = require('../src/core/paths.mjs').aidfPaths(root).artefacts;
+  const artefactsDir = aidfPaths(root).artefacts.dir;
   await fsp.writeFile(path.join(artefactsDir, 'req1.json'), JSON.stringify(req1, null, 2));
   await fsp.writeFile(path.join(artefactsDir, 'req2.json'), JSON.stringify(req2, null, 2));
   
@@ -108,7 +109,7 @@ test('resolveLink returns artefact if it exists', async () => {
     }
   };
   
-  const artefactsDir = require('../src/core/paths.mjs').aidfPaths(root).artefacts;
+  const artefactsDir = aidfPaths(root).artefacts.dir;
   await fsp.writeFile(path.join(artefactsDir, 'req.json'), JSON.stringify(req, null, 2));
   
   const found = await resolveLink(root, 'REQ-F-001');
@@ -151,7 +152,7 @@ test('verifyChain returns broken links when target artefact is missing', async (
     }
   };
   
-  const artefactsDir = require('../src/core/paths.mjs').aidfPaths(root).artefacts;
+  const artefactsDir = aidfPaths(root).artefacts.dir;
   await fsp.writeFile(path.join(artefactsDir, 'req.json'), JSON.stringify(req, null, 2));
   
   const result = await verifyChain(root, 'REQ-F-001');
@@ -214,7 +215,7 @@ test('verifyChain returns path when chain is complete', async () => {
     }
   };
   
-  const artefactsDir = require('../src/core/paths.mjs').aidfPaths(root).artefacts;
+  const artefactsDir = aidfPaths(root).artefacts.dir;
   await fsp.writeFile(path.join(artefactsDir, 'req.json'), JSON.stringify(req, null, 2));
   await fsp.writeFile(path.join(artefactsDir, 'backend.json'), JSON.stringify(backend, null, 2));
   
@@ -254,7 +255,7 @@ test('findBrokenLinks returns empty array when no broken links', async () => {
     }
   };
   
-  const artefactsDir = require('../src/core/paths.mjs').aidfPaths(root).artefacts;
+  const artefactsDir = aidfPaths(root).artefacts.dir;
   await fsp.writeFile(path.join(artefactsDir, 'req.json'), JSON.stringify(req, null, 2));
   
   const broken = await findBrokenLinks(root);
@@ -314,7 +315,7 @@ test('findMissingLinks returns artefacts missing a specific link type', async ()
     }
   };
   
-  const artefactsDir = require('../src/core/paths.mjs').aidfPaths(root).artefacts;
+  const artefactsDir = aidfPaths(root).artefacts.dir;
   await fsp.writeFile(path.join(artefactsDir, 'req1.json'), JSON.stringify(req1, null, 2));
   await fsp.writeFile(path.join(artefactsDir, 'req2.json'), JSON.stringify(req2, null, 2));
   
