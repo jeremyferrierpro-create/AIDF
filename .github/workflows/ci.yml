@@ -33,7 +33,7 @@ jobs:
 
       - name: Test suite (includes packaging test)
         shell: bash
-        run: node --test "tests/*.test.mjs"
+        run: node --test "tests/**/*.test.mjs"
 
       - name: Smoke CLI
         shell: bash

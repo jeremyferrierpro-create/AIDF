@@ -43,7 +43,7 @@ test('npm pack ships every file required by bootstrap and installs a working CLI
     assert.ok(metadata.filename.endsWith('.tgz'));
     const tarball = path.join(packDir, metadata.filename);
 
-    const listing = await run(TAR, ['-tf', tarball]);
+    const listing = await run(TAR, ['--force-local', '-tf', tarball]);
     assert.equal(listing.code, 0, listing.stderr);
     const files = listing.stdout.split(/\r?\n/).filter(Boolean).map((f) => f.replace(/^package\//, ''));
     for (const required of [
@@ -66,7 +66,7 @@ test('npm pack ships every file required by bootstrap and installs a working CLI
 
     const unpack = path.join(packDir, 'unpacked');
     await fsp.mkdir(unpack);
-    const extracted = await run(TAR, ['-xf', tarball, '-C', unpack]);
+    const extracted = await run(TAR, ['--force-local', '-xf', metadata.filename, '-C', 'unpacked'], { cwd: packDir });
     assert.equal(extracted.code, 0, extracted.stderr);
     for (const required of ['INSTALLATION.md', 'CHANGELOG.md', 'assets/workflows/gates.yaml']) {
       await fsp.access(path.join(unpack, 'package', required));

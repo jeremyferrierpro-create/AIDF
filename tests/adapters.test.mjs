@@ -22,7 +22,7 @@ async function installAdapter(adapter, withHooks = false) {
 }
 
 test('registry exposes qoder and generic adapters', () => {
-  assert.deepEqual(listAdapters().map((a) => a.key), ['qoder', 'generic']);
+  assert.deepEqual(listAdapters().map((a) => a.key), ['qoder', 'generic', 'opencode']);
   assert.equal(getAdapter('qoder').name, 'Qoder IDE');
   assert.throws(() => getAdapter('unknown'), /Unknown adapter/);
 });
