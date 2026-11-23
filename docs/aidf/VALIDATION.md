@@ -8,11 +8,11 @@ Scope: AIDF 0.1.0 framework code + installation into two real scratch projects.
 
 | Suite | Coverage | Result |
 |---|---|---|
-| `tests/yaml.test.mjs` | subset parser/dumper: maps, sequences, inline arrays, quoted values, block scalars `|`/`>`/`|-`, comments, roundtrip, rejection of malformed input, real `gates.yaml` (16 gates) and `skills.yaml` (13 skills) | PASS (6 tests) |
+| `tests/yaml.test.mjs` | subset parser/dumper: maps, sequences, inline arrays, quoted values, block scalars `|`/`>`/`|-`, comments, roundtrip, rejection of malformed input, real `gates.yaml` (16 gates) and `skills.yaml` (14 skills) | PASS (6 tests) |
 | `tests/paths.test.mjs` | `resolveInside` traversal/absolute/reserved-name/invalid-character rejection; managed block replace/remove; `deepMerge`; `slugify`; `truncate` | PASS (8 tests) |
 | `tests/installer.test.mjs` | action engine: create/update-idempotence, unmanaged file preserved (CONFLICT), edited managed file preserved (CONFLICT), `--force` with backup, dry-run writes nothing, mkdir idempotent, managed block preserves user text, merge-json keeps keys/arrays, summary | PASS (9 tests) |
 | `tests/skills.test.mjs` | skill validation rules (name/name-length/description 1024/duplicates); full registry build → 13 AVAILABLE with hashes; dependency cycle detection; catalog consistency | PASS (6 tests) |
-| `tests/adapters.test.mjs` | registry, Qoder plan artifact set (3 rules + 13 skills + agent + hooks + settings merge), verify = CONTRACT-PROVEN with runtime checks NOT_PROVEN, failure on missing rule, generic adapter | PASS (5 tests) |
+| `tests/adapters.test.mjs` | registry, Qoder plan artifact set (3 rules + 14 skills + agent + hooks + settings merge), verify = CONTRACT-PROVEN with runtime checks NOT_PROVEN, failure on missing rule, generic adapter | PASS (5 tests) |
 | `tests/cli.test.mjs` | end-to-end via spawned `bin/aidf.mjs`: dry-run (no side effects), install, AGENTS.md preservation, doctor JSON, scan --record with `.env` name-only, skills validate, context, intake-entry gate, config set/get, speckit status, resources inspect, uninstall refusal/dry-run/real + restoration of AGENTS.md & existing rule | PASS (1 test) |
 | **Total** | | **43/43 PASS** |
 

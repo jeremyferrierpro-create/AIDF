@@ -35,7 +35,7 @@ L1 est **additif** : jamais de modifications destructives, jamais de suppression
 - 18 verbes CLI
 - 8 phases, 16 gates, 6 types de checks
 - 11 documents Markdown (.aidf/docs/)
-- 13 skills builtin
+- 14 skills builtin
 - Evidence engine opérationnel
 - CLI autonome, sans dépendance runtime inutile
 

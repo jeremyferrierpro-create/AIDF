@@ -99,7 +99,7 @@ aidf evidence verify                        # re-h contractualise toute la chaî
 
 ## 6. Skills
 
-13 skills internes (`aidf-*`) couvrent : contexte, produit, exigences,
+14 skills internes (`aidf-*`) couvrent : contexte, produit, exigences,
 architecture, BDD, UX, front, back, tests, sécurité, DevOps, docs,
 transition. La sélection est faite par `context` (toujours activées : socle ;
 sinon par phase et mots-clés, plafonnées).

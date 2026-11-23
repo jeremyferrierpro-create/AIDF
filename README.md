@@ -38,7 +38,7 @@ delivery (`aidf ops` : build/test/deploy/rollback + monitoring `watch`
 borné, exécution conditionnée et evidence), client Figma REST réel
 (`validateFigma` prouvé sur un fichier réel), et rapport de
 release consolidé ; gérer 8 phases / 16 gates ; chaîner l'evidence
-(SHA-256) ; 13 skills built-in + adaptateurs **Qoder** (skills runtime
+(SHA-256) ; 14 skills built-in + adaptateurs **Qoder** (skills runtime
 prouvés par un humain), **OpenCode** (runtime prouvé) et **generic**
 (AGENTS.md + `.aidf/skills/`) ; intégrer
 GitHub Spec Kit **sans duplication** ; enregistrer des ressources externes
@@ -106,9 +106,9 @@ Contrat de codes de sortie : **0** succès · **1** échec/refus · **2** confli
 
 ```
 AGENTS.md                    bloc managé (votre contenu préservé)
-.qoder/                   règles + 13 skills + agent + hooks (adaptateur qoder)
-.opencode/skills/         13 skills (adaptateur opencode — runtime prouvé)
-.aidf/skills/             13 skills (adaptateur generic — tout hôte AGENTS.md)
+.qoder/                   règles + 14 skills + agent + hooks (adaptateur qoder)
+.opencode/skills/         14 skills (adaptateur opencode — runtime prouvé)
+.aidf/skills/             14 skills (adaptateur generic — tout hôte AGENTS.md)
 .aidf/AIDF.md              point d'entrée agent
 .aidf/bin/aidf.mjs         lanceur portable
 .aidf/framework/           copie autonome du framework

@@ -29,7 +29,7 @@ interface; `generic` (AGENTS.md block only) is the baseline fallback.
 
 - `PASS`: node version, config, manifest, document files, evidence integrity.
 - `CONTRACT-PROVEN`: adapter files exist and satisfy constraints (agents block,
-  3 rules, 13 skills parse, settings JSON valid).
+  3 rules, 14 skills parse, settings JSON valid).
 - `NOT_PROVEN` until a human confirms in a real session:
     - `runtime-skill-discovery` → `/skills` lists `aidf-project-context`;
     - `runtime-rule-activation` → rules set to Always Apply in the Qoder UI;
@@ -41,7 +41,7 @@ evidence of runtime activation.
 ## 4. Manual activation checklist (one time per project)
 
 1. Open the project in Qoder; wait for indexing.
-2. Run `/skills`; verify the 13 `aidf-*` skills and any `speckit-*` skills.
+2. Run `/skills`; verify the 14 `aidf-*` skills and any `speckit-*` skills.
 3. Settings → Rules: set `aidf-00-core` and `aidf-10-security` to **Always
    Apply**; leave `aidf-20-context` as Model Decision or Specific Files.
 4. With hooks: restart Qoder; make one edit; check `.aidf/logs/`.

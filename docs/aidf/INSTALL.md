@@ -54,7 +54,7 @@ node .aidf/bin/aidf.mjs setup resources
 
 Then in Qoder:
 
-1. Restart/open the project; run `/skills` to confirm the 13 `aidf-*` skills.
+1. Restart/open the project; run `/skills` to confirm the 14 `aidf-*` skills.
 2. Settings → Rules: set `aidf-00-core` and `aidf-10-security` to
    **Always Apply** (this manual step is what turns the NOT_PROVEN runtime
    checks into proven ones).

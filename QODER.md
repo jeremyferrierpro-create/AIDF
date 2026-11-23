@@ -14,7 +14,7 @@ l'IDE**, et les limites honnêtes.
 | `.qoder/rules/aidf-00-core.md` | Règle socle : inspecter avant modifier, statuts, evidence |
 | `.qoder/rules/aidf-10-security.md` | Règle sécurité : secrets jamais lus, exécution opt-in, fichiers protégés |
 | `.qoder/rules/aidf-20-context.md` | Règle contexte : lire `.aidf/state/context/latest.md` avant d'agir |
-| `.qoder/skills/aidf-*/SKILL.md` | 13 skills premières (nom ≤ 64, description ≤ 1024 : contraintes Qoder respectées et testées) |
+| `.qoder/skills/aidf-*/SKILL.md` | 14 skills premières (nom ≤ 64, description ≤ 1024 : contraintes Qoder respectées et testées) |
 | `.qoder/agents/aidf-orchestrator.md` | Agent orchestrateur (outils Read/Grep/Glob/Bash + liste des skills) |
 | `.qoder/settings.json` (option `--with-hooks`) | Entrées `SessionStart` (contexte de session) et `PostToolUse` (audit) **fusionnées** — VOS settings existants sont conservés |
 | `.aidf/hooks/session-context.mjs`, `audit.mjs` | Hooks : rappel de phase / docs bloquées ; audit **métadonnées seulement** (jamais le contenu des fichiers) |
@@ -31,7 +31,7 @@ règles, découverte les skills et exécute les hooks. D'où le statut
 ### Étape 1 — Découverte des skills
 1. Ouvrir le projet dans Qoder et attendre la fin de l'indexation.
 2. Ouvrir la palette/chat et exécuter la commande **`/skills`**.
-3. Verifier la présence des 13 `aidf-*` (et, si installé, des 10 `speckit-*`).
+3. Verifier la présence des 14 `aidf-*` (et, si installé, des 10 `speckit-*`).
 
 ### Étape 2 — Activation des règles
 1. Ouvrir **Settings → Rules** dans Qoder.
@@ -48,7 +48,7 @@ règles, découverte les skills et exécute les hooks. D'où le statut
 ### Enregistrer la preuve (transforme NOT_PROVEN en PROVEN nominatif)
 
 ```powershell
-aidf evidence add --type qoder-runtime-activation --human --by "votre_nom" --note "/skills: 13 aidf-*; Always Apply: core + security; audit JSONL reçu"
+aidf evidence add --type qoder-runtime-activation --human --by "votre_nom" --note "/skills: 14 aidf-*; Always Apply: core + security; audit JSONL reçu"
 ```
 
 Après cette evidence, `doctor` reflète l'activation prouvée par un humain

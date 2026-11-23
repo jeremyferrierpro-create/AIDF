@@ -16,7 +16,7 @@ their own project, as shipped by version 0.1.0.
 | `.aidf/docs/*.md` | 11 honest templates: constitution, PRD, TRD, APPFLOW, UI-UX, BACKEND, PLAN, SECURITY, CONVENTIONS, DECISIONS, CHANGELOG |
 | `.aidf/registry/*.yaml` | skills catalog (13), dependencies, activation map, sources |
 | `.aidf/workflows/*.yaml` | phases (8) + executable gates (16) |
-| `.qoder/*` (qoder adapter) | `aidf-*` rules, 13 skills, orchestrator agent, merged hook entries |
+| `.qoder/*` (qoder adapter) | `aidf-*` rules, 14 skills, orchestrator agent, merged hook entries |
 | `.aidf/evidence/`, `state/`, `reports/`, `backups/`, `logs/` | runtime state (logs and backups stay local) |
 
 ## 2. Verified behaviours as an installable unit (measured on real runs)

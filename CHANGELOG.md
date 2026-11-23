@@ -27,6 +27,8 @@ conventional commits; each entry names real, verified behaviour changes.
 
 ### Changed
 - `AIDF_VERSION` and `package.json` bumped to **0.4.0**.
+- Docs updated: builtin skill count corrected from 13 to 14 across
+  README, INSTALL, QODER, UTILISATION and `docs/aidf/*`.
 
 ## [0.3.2] — 2026-11-21
 
