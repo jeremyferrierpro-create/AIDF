@@ -4,7 +4,7 @@ import { existsSync } from '../util/fsx.mjs';
 
 export const FRAMEWORK_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 export const AIDF_DIR = '.aidf';
-export const AIDF_VERSION = '0.3.2';
+export const AIDF_VERSION = '0.4.0';
 
 export const DOCUMENTS = [
   'PRD',
@@ -18,6 +18,9 @@ export const DOCUMENTS = [
   'constitution',
   'DECISIONS',
   'CHANGELOG',
+  'USECASES',
+  'WIREFRAMES',
+  'VERSIONS',
 ];
 
 export const DOC_STATUSES = ['DRAFT', 'VALIDATED', 'BLOCKED', 'OUTDATED', 'NOT_APPLICABLE'];

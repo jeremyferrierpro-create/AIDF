@@ -72,7 +72,7 @@ test('parses the real gate and skill registries', async () => {
   const gates = parseYaml(await fs.readFile(path.join(root, 'assets', 'workflows', 'gates.yaml'), 'utf8'));
   const skills = parseYaml(await fs.readFile(path.join(root, 'assets', 'registry', 'skills.yaml'), 'utf8'));
   assert.equal(gates.gates.length, 16);
-  assert.equal(skills.skills.length, 13);
+  assert.equal(skills.skills.length, 14);
   assert.ok(gates.gates.every((g) => g.id && Array.isArray(g.checks)));
   assert.ok(skills.skills.every((s) => s.id && s.name.startsWith('aidf-')));
 });

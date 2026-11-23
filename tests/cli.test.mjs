@@ -71,7 +71,7 @@ test('end-to-end install, verify, scan, validate and uninstall', { timeout: 1800
   assert.equal(doctor.code, 0, doctor.stderr);
   const doctorJson = parseJson(doctor);
   assert.ok(doctorJson.checks.every((c) => c.status !== 'FAIL'));
-  assert.equal(doctorJson.skills.AVAILABLE, 13);
+  assert.equal(doctorJson.skills.AVAILABLE, 14);
 
   const scan = await run(['scan', '--target', root, '--record', '--json']);
   assert.equal(scan.code, 0, scan.stderr);

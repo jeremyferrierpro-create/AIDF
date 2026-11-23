@@ -38,10 +38,10 @@ test('rejects invalid names, missing and oversized descriptions', () => {
 test('builds a registry where every installed builtin skill is AVAILABLE', async () => {
   const root = await projectWithSkills();
   const registry = await buildSkillRegistry(root, { adapter: 'qoder', frameworkRoot });
-  assert.equal(registry.skills.filter((s) => s.source === 'builtin').length, 13);
+  assert.equal(registry.skills.filter((s) => s.source === 'builtin').length, 14);
   const notAvailable = registry.skills.filter((s) => s.source === 'builtin' && s.status !== 'AVAILABLE');
   assert.deepEqual(notAvailable.map((s) => `${s.id}:${s.status}:${s.errors.join('|')}`), []);
-  assert.equal(registry.summary.AVAILABLE, 13);
+  assert.equal(registry.summary.AVAILABLE, 14);
   for (const skill of registry.skills.filter((s) => s.source === 'builtin')) {
     assert.ok(skill.path.endsWith(`${skill.name}/SKILL.md`));
     assert.match(skill.hash, /^[a-f0-9]{64}$/);
@@ -63,7 +63,7 @@ test('marks duplicate skill names as BLOCKED', async () => {
 
 test('catalog and status vocabulary are consistent', async () => {
   const catalog = await loadSkillCatalog(frameworkRoot);
-  assert.equal(catalog.length, 13);
+  assert.equal(catalog.length, 14);
   assert.deepEqual(SKILL_STATUSES, ['DISCOVERED', 'VALIDATED', 'REGISTERED', 'AVAILABLE', 'BLOCKED', 'INCOMPATIBLE']);
   const summary = summarizeSkills([{ status: 'AVAILABLE' }, { status: 'AVAILABLE' }, { status: 'BLOCKED' }]);
   assert.equal(summary.AVAILABLE, 2);

@@ -1,6 +1,6 @@
 {
   "name": "framework-aidf",
-  "version": "0.3.2",
+  "version": "0.4.0",
   "description": "AI Development Framework - a portable, governable development environment for AI-assisted software delivery",
   "type": "module",
   "license": "MIT",

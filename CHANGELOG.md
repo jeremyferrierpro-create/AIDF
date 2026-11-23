@@ -3,6 +3,31 @@
 All notable changes to AIDF are documented here. This project does not use
 conventional commits; each entry names real, verified behaviour changes.
 
+## [0.4.0] — 2026-11-23
+
+### Added
+- **Version lock methodology** (proven on the COAB project): new document
+  `assets/docs/VERSIONS.md` + per-version locks `assets/docs/versions/V1.md`
+  to `V5.md` —
+  per-version IN/OUT scope, screens, data, engines, integrations and
+  measurable exit gates. Nothing is coded outside the active version's
+  lock; scope changes require an ADR.
+- **Use-case catalogue template** `assets/docs/USECASES.md` — actors,
+  pre/post-conditions, nominal + alternative scenarios, traceability to
+  rules, organised by version.
+- **Zonings/wireframes/mockups spec** `assets/docs/WIREFRAMES.md` —
+  screen inventory, ASCII wireframes, state matrix, and the 3 fidelity
+  levels (`.aidf/wireframes/` low-fi, `.aidf/mockups/` hi-fi).
+- **New skill `aidf-version-planning`** — classifies every feature into
+  its target version, freezes scope, blocks out-of-version work; wired
+  into `skills.yaml`, `activation-map.yaml` (specification/planning
+  phases + version/scope/usecase/wireframe keywords).
+- `USECASES`, `WIREFRAMES`, `VERSIONS` added to the known document list
+  in `src/core/paths.mjs`.
+
+### Changed
+- `AIDF_VERSION` and `package.json` bumped to **0.4.0**.
+
 ## [0.3.2] — 2026-11-21
 
 ### Changed (docs)

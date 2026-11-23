@@ -39,7 +39,7 @@ test('qoder plan writes rules, skills, agent and optional hooks', async () => {
   assert.ok(paths.includes('.qoder/skills/aidf-project-context/SKILL.md'));
   assert.ok(paths.includes('.aidf/hooks/session-context.mjs'));
   assert.ok(paths.includes('.qoder/settings.json'));
-  assert.equal(paths.filter((p) => p.startsWith('.qoder/skills/') && p.endsWith('/SKILL.md')).length, 13);
+  assert.equal(paths.filter((p) => p.startsWith('.qoder/skills/') && p.endsWith('/SKILL.md')).length, 14);
 
   const settings = JSON.parse(await fsp.readFile(path.join(root, '.qoder/settings.json'), 'utf8'));
   assert.ok(settings.hooks.SessionStart);
@@ -76,7 +76,7 @@ test('generic adapter manages AGENTS.md and installs built-in skills under .aidf
   const { root, actions } = await installAdapter(adapter, false);
   const paths = actions.map((a) => a.path);
   assert.ok(paths.includes('AGENTS.md'));
-  assert.equal(paths.filter((p) => p.startsWith('.aidf/skills/') && p.endsWith('/SKILL.md')).length, 13);
+  assert.equal(paths.filter((p) => p.startsWith('.aidf/skills/') && p.endsWith('/SKILL.md')).length, 14);
   assert.ok(await exists(path.join(root, '.aidf', 'skills', 'aidf-project-context', 'SKILL.md')));
   const result = await adapter.verify({ root, frameworkRoot });
   assert.equal(result.status, 'PROVEN');

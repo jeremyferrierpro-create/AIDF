@@ -539,3 +539,45 @@ skills:
       - opencode
     path: skills/aidf-phase-transition/SKILL.md
     status: AVAILABLE
+
+  - id: version-planning
+    name: aidf-version-planning
+    version: 1.0.0
+    description: Maintain the version lock of a project — classify every feature into its target version, keep the IN/OUT scope frozen, and block work outside the active version. Use when planning releases, scoping features, or before starting any implementation phase.
+    capabilities:
+      - version-scope-classification
+      - scope-lock-enforcement
+      - release-readiness-gates
+    triggers:
+      - version
+      - scope
+      - release
+      - roadmap
+      - V1
+      - V2
+      - feature classification
+    phases:
+      - specification
+      - planning
+    documents:
+      - VERSIONS
+      - USECASES
+      - WIREFRAMES
+      - PLAN
+    rules:
+      - no-code-outside-version-lock
+      - scope-change-requires-adr
+    dependsOn:
+      - requirements-engineering
+    prerequisites:
+      - docs/VERSIONS.md exists
+    deliverables:
+      - updated version file
+      - scope classification
+    tests:
+      - every new feature is assigned to exactly one version
+    ide:
+      - qoder
+      - generic
+    path: skills/aidf-version-planning/SKILL.md
+    status: AVAILABLE
